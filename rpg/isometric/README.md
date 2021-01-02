@@ -29,16 +29,16 @@ function getTileIndex(x,y) {
 ```
 
 The above assumes you have tiles layed out like the following
-![Layout of isometric tiles](/isometric_grid_1.png)
+![Layout of isometric tiles](./isometric_grid_1.png)
 
 The first calculation of grid x,y are to map the screen x,y coordintes to the following tiles
-![Overlaying a normal grid over the isometric grid, encapsulating 1 tile entirely and effectively dividing the off tiles into 4 quadrants](/isometric_grid_2.png)
+![Overlaying a normal grid over the isometric grid, encapsulating 1 tile entirely and effectively dividing the off tiles into 4 quadrants](./isometric_grid_2.png)
 
 Once you have the coordinates of the fully encapsulated tile you an work out if the x,y coordinates sit inside the tile and adjust using the following if they sit outside the tile. To do this, it is easier to normalise the coordinates relative to the tile to make the math easier
-![Formulas for adjacent tiles and formula for normalising the coordinates to make the math easier](/isometric_grid_normalised.png)
+![Formulas for adjacent tiles and formula for normalising the coordinates to make the math easier](./isometric_grid_normalised.png)
 
 Once normalised, you can work out whether you fall outside the tile into the adjacent tiles by checking the values of the the normalied `nx+ny` is between 0.5 and 1.5 and `nx-ny` is between -0.5 and 0.5
-![Calculations for nx+ny and nx-ny](/isometric_grid_normalised_vw.png)
+![Calculations for nx+ny and nx-ny](./isometric_grid_normalised_vw.png)
 
 ## Rendering
 Experimented with 2 rendering methods here
