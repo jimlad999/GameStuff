@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body,html {
+ background:hotpink;
+ margin:0;
+ padding:0;
+ font-size:0;
+}
+.hidden {
+ visibility: hidden;
+}
+.green {
+ color:green;
+}
+.blue {
+ color:blue;
+}
+.row {
+ position:relative;
+ margin-top:-16px;
+ height:32px;
+}
+.row:nth-child(2n) {
+ left:32px;
+}
+.row .tile {
+ display:inline-block;
+}
+.tile {
+ height:0;
+ width:0;
+ left:0;
+ top:0;
+ border: 32px solid transparent;
+ border-top: 16px solid currentColor;
+ border-bottom-width: 16px;
+ position:relative;
+ z-index: 10;
+}
+.tile:before {
+ content: '';
+ height: 0;
+ width: 0;
+ left:-32px;
+ border: 32px solid transparent;
+ border-top: 16px solid transparent;
+ border-bottom: 16px solid currentColor;
+ position: absolute;
+}
+.tile:after {
+ content: '';
+ width: 0;
+ left:-32px;
+ border: 32px solid grey;
+ border-bottom: 16px solid grey;
+ border-top: 16px solid currentColor;
+ position: absolute;
+}
+.tile.level0:before {
+ top:-48px;
+}
+.tile.level0:after {
+ content:none;
+}
+.level1 {
+ border-top-color:grey;
+ filter:brightness(105%);
+}
+.tile.level1:before{
+ top: -80px;
+}
+.tile.level1:after{
+ height: 0;
+ top: -48px;
+}
+.level2 {
+ border-top-color:grey;
+ filter:brightness(110%);
+}
+.tile.level2:before{
+ top: -112px;
+}
+.tile.level2:after{
+ height: 32px;
+ top: -80px;
+}
+.level3 {
+ border-top-color:grey;
+ filter:brightness(115%);
+}
+.tile.level3:before{
+ top: -144px;
+}
+.tile.level3:after{
+ height: 64px;
+ top: -112px;
+}
+.level4 {
+ border-top-color:grey;
+ filter:brightness(120%);
+}
+.tile.level4:before{
+ top: -176px;
+}
+.tile.level4:after{
+ height: 96px;
+ top: -144px;
+}
+.level5 {
+ border-top-color:grey;
+ filter:brightness(125%);
+}
+.tile.level5:before{
+ top: -208px;
+}
+.tile.level5:after{
+ height: 128px;
+ top: -176px;
+}
+.level6 {
+ border-top-color:grey;
+ filter:brightness(130%);
+}
+.tile.level6:before{
+ top: -240px;
+}
+.tile.level6:after{
+ height: 160px;
+ top: -208px;
+}
+.level7 {
+ border-top-color:grey;
+ filter:brightness(135%);
+}
+.tile.level7:before{
+ top: -272px;
+}
+.tile.level7:after{
+ height: 192px;
+ top: -240px;
+}
+.level8 {
+ border-top-color:grey;
+ filter:brightness(140%);
+}
+.tile.level8:before{
+ top: -304px;
+}
+.tile.level8:after{
+ height: 224px;
+ top: -272px;
+}
+.level9 {
+ border-top-color:grey;
+ filter:brightness(145%);
+}
+.tile.level9:before{
+ top: -336px;
+}
+.tile.level9:after{
+ height: 256px;
+ top: -304px;
+}
+.tile.wall-l[class*="level-"]:before {
+ content:"";
+ left: -32px;
+ border-left: 16px solid transparent;
+ border-top: 8px solid transparent;
+ border-right: 16px solid grey;
+ border-bottom: 8px solid grey;
+}
+.tile.wall-r[class*="level-"]:before {
+ content:"";
+ left: 0;
+ border-left: 16px solid grey;
+ border-top: 8px solid transparent;
+ border-right: 16px solid transparent;
+ border-bottom: 8px solid grey;
+}
+.tile.wall-l.wall-r[class*="level-"]:before {
+ content:"";
+ left: -32px;
+ border-left: 32px solid transparent;
+ border-top: 16px solid transparent;
+ border-right: 32px solid transparent;
+ border-bottom: 16px solid grey;
+}
+.tile[class*="level-"]:after{
+ top: -48px;
+ border-left-color: transparent;
+ border-top-color: transparent;
+ border-bottom-color: currentColor;
+ border-right-color: transparent;
+}
+.tile.level-1 {
+ filter:brightness(95%);
+ transform: translateY(32px);
+ z-index: 9;
+}
+.tile.level-1:before {
+ content:none;
+ top: -64px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey;
+}
+.tile.level-1.wall-l.wall-r:before {
+ top: -80px;
+ box-shadow:
+  0 32px 0 0 grey;
+}
+.tile.level-2 {
+ filter:brightness(90%);
+ transform: translateY(64px);
+ z-index: 8;
+}
+.tile.level-2:before {
+ content:none;
+ top: -96px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey;
+}
+.tile.level-2.wall-l.wall-r:before {
+ top: -112px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey;
+}
+.tile.level-3 {
+ filter:brightness(85%);
+ transform: translateY(96px);
+ z-index: 7;
+}
+.tile.level-3:before {
+ content:none;
+ top: -128px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey,
+  0 80px 0 0 grey,
+  0 96px 0 0 grey;
+}
+.tile.level-3.wall-l.wall-r:before {
+ top: -144px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey,
+  0 96px 0 0 grey;
+}
+.tile.level-4 {
+ filter:brightness(80%);
+ transform: translateY(128px);
+ z-index: 6;
+}
+.tile.level-4:before {
+ content:none;
+ top: -160px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey,
+  0 80px 0 0 grey,
+  0 96px 0 0 grey,
+  0 112px 0 0 grey,
+  0 128px 0 0 grey;
+}
+.tile.level-4.wall-l.wall-r:before {
+ top: -176px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey,
+  0 96px 0 0 grey,
+  0 128px 0 0 grey;
+}
+.tile.level-5 {
+ filter:brightness(75%);
+ transform: translateY(160px);
+ z-index: 5;
+}
+.tile.level-5:before {
+ content:none;
+ top: -192px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey,
+  0 80px 0 0 grey,
+  0 96px 0 0 grey,
+  0 112px 0 0 grey,
+  0 128px 0 0 grey,
+  0 144px 0 0 grey,
+  0 160px 0 0 grey;
+}
+.tile.level-5.wall-l.wall-r:before {
+ top: -208px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey,
+  0 96px 0 0 grey,
+  0 128px 0 0 grey,
+  0 160px 0 0 grey;
+}
+.tile.level-6 {
+ filter:brightness(70%);
+ transform: translateY(192px);
+ z-index: 4;
+}
+.tile.level-6:before {
+ content:none;
+ top: -224px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey,
+  0 80px 0 0 grey,
+  0 96px 0 0 grey,
+  0 112px 0 0 grey,
+  0 128px 0 0 grey,
+  0 144px 0 0 grey,
+  0 160px 0 0 grey,
+  0 176px 0 0 grey,
+  0 192px 0 0 grey;
+}
+.tile.level-6.wall-l.wall-r:before {
+ top: -240px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey,
+  0 96px 0 0 grey,
+  0 128px 0 0 grey,
+  0 160px 0 0 grey,
+  0 192px 0 0 grey;
+}
+.tile.level-7 {
+ filter:brightness(65%);
+ transform: translateY(224px);
+ z-index: 3;
+}
+.tile.level-7:before {
+ content:none;
+ top: -256px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey,
+  0 80px 0 0 grey,
+  0 96px 0 0 grey,
+  0 112px 0 0 grey,
+  0 128px 0 0 grey,
+  0 144px 0 0 grey,
+  0 160px 0 0 grey,
+  0 176px 0 0 grey,
+  0 192px 0 0 grey,
+  0 208px 0 0 grey,
+  0 224px 0 0 grey;
+}
+.tile.level-7.wall-l.wall-r:before {
+ top: -272px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey,
+  0 96px 0 0 grey,
+  0 128px 0 0 grey,
+  0 160px 0 0 grey,
+  0 192px 0 0 grey,
+  0 224px 0 0 grey;
+}
+.tile.level-8 {
+ filter:brightness(60%);
+ transform: translateY(256px);
+ z-index: 2;
+}
+.tile.level-8:before {
+ content:none;
+ top: -288px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey,
+  0 80px 0 0 grey,
+  0 96px 0 0 grey,
+  0 112px 0 0 grey,
+  0 128px 0 0 grey,
+  0 144px 0 0 grey,
+  0 160px 0 0 grey,
+  0 176px 0 0 grey,
+  0 192px 0 0 grey,
+  0 208px 0 0 grey,
+  0 224px 0 0 grey,
+  0 240px 0 0 grey,
+  0 256px 0 0 grey;
+}
+.tile.level-8.wall-l.wall-r:before {
+ top: -304px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey,
+  0 96px 0 0 grey,
+  0 128px 0 0 grey,
+  0 160px 0 0 grey,
+  0 192px 0 0 grey,
+  0 224px 0 0 grey,
+  0 256px 0 0 grey;
+}
+.tile.level-9 {
+ filter:brightness(55%);
+ transform: translateY(288px);
+ z-index: 1;
+}
+.tile.level-9:before {
+ content:none;
+ top: -320px;
+ box-shadow:
+  0 16px 0 0 grey,
+  0 32px 0 0 grey,
+  0 48px 0 0 grey,
+  0 64px 0 0 grey,
+  0 80px 0 0 grey,
+  0 96px 0 0 grey,
+  0 112px 0 0 grey,
+  0 128px 0 0 grey,
+  0 144px 0 0 grey,
+  0 160px 0 0 grey,
+  0 176px 0 0 grey,
+  0 192px 0 0 grey,
+  0 208px 0 0 grey,
+  0 224px 0 0 grey,
+  0 240px 0 0 grey,
+  0 256px 0 0 grey,
+  0 272px 0 0 grey,
+  0 288px 0 0 grey;
+}
+.tile.level-9.wall-l.wall-r:before {
+ top: -336px;
+ box-shadow:
+  0 32px 0 0 grey,
+  0 64px 0 0 grey,
+  0 96px 0 0 grey,
+  0 128px 0 0 grey,
+  0 160px 0 0 grey,
+  0 192px 0 0 grey,
+  0 224px 0 0 grey,
+  0 256px 0 0 grey,
+  0 288px 0 0 grey;
+}
+</style>
+</head>
+<body>
+<div style="position:absolute;top:340px;left:50px;">
+ <div class="row">
+  <div class="tile level-9 wall-r wall-l green"></div>
+  <div class="tile level-8 wall-r wall-l green"></div>
+  <div class="tile level-7 wall-r wall-l green"></div>
+  <div class="tile level-6 wall-r wall-l green"></div>
+  <div class="tile level-5 wall-r wall-l green"></div>
+  <div class="tile level-4 wall-r wall-l green"></div>
+  <div class="tile level-3 wall-r wall-l green"></div>
+  <div class="tile level-2 wall-r wall-l green"></div>
+  <div class="tile level-1 wall-r wall-l green"></div>
+  <div class="tile level0 green"></div>
+  <div class="tile level1 green"></div>
+  <div class="tile level2 green"></div>
+  <div class="tile level3 green"></div>
+  <div class="tile level4 green"></div>
+  <div class="tile level5 green"></div>
+  <div class="tile level6 green"></div>
+  <div class="tile level7 green"></div>
+  <div class="tile level8 green"></div>
+  <div class="tile level9 green"></div>
+ </div>
+ <div class="row">
+  <div class="tile level-9 wall-r green"></div>
+  <div class="tile level-8 wall-r green"></div>
+  <div class="tile level-7 wall-r green"></div>
+  <div class="tile level-6 wall-r green"></div>
+  <div class="tile level-5 wall-r green"></div>
+  <div class="tile level-4 wall-r green"></div>
+  <div class="tile level-3 wall-r green"></div>
+  <div class="tile level-2 wall-r green"></div>
+  <div class="tile level-1 wall-r green"></div>
+  <div class="tile level0 green"></div>
+  <div class="tile level1 green"></div>
+  <div class="tile level2 green"></div>
+  <div class="tile level3 green"></div>
+  <div class="tile level4 green"></div>
+  <div class="tile level5 green"></div>
+  <div class="tile level6 green"></div>
+  <div class="tile level7 green"></div>
+  <div class="tile level8 green"></div>
+  <div class="tile level9 green"></div>
+ </div>
+ <div class="row">
+  <div class="tile level-9 green"></div>
+  <div class="tile level-8 green"></div>
+  <div class="tile level-7 green"></div>
+  <div class="tile level-6 green"></div>
+  <div class="tile level-5 green"></div>
+  <div class="tile level-4 green"></div>
+  <div class="tile level-3 green"></div>
+  <div class="tile level-2 green"></div>
+  <div class="tile level-1 green"></div>
+  <div class="tile level0 green"></div>
+  <div class="tile level1 green"></div>
+  <div class="tile level2 green"></div>
+  <div class="tile level3 green"></div>
+  <div class="tile level4 green"></div>
+  <div class="tile level5 green"></div>
+  <div class="tile level6 green"></div>
+  <div class="tile level7 green"></div>
+  <div class="tile level8 green"></div>
+  <div class="tile level9 green"></div>
+ </div>
+</div>
+</body>
+</html>

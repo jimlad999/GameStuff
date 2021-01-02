@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body,html {
+ background: black;
+ margin:0;
+ padding:0;
+ font-size:0;
+}
+</style>
+</head>
+<body>
+<canvas id="tilemap" height="800" width="1600"></canvas>
+<script>
+//tile stuff
+var tileW=64; //const
+var tileW2=tileW/2; //const
+var tileH=32; //const
+var tileH2=tileH/2; //const
+var tileDepth=[
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,-1,-1,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+ [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+];
+var tilemap=document.getElementById("tilemap");
+var tilemapH=tilemap.height;
+var tilemapW=tilemap.width;
+var wallHeight=32;
+var wallHeight2=16; //half wallHeight
+var seeBehindTileOpacity=1;
+var seeBehindTileOpacityMin=0.3;
+tilemap=tilemap.getContext("2d");
+var green0=new Image();
+green0.src="green.png";
+var greenSub1=new Image();
+greenSub1.src="./green-1.png";
+var greenSub1Left=new Image();
+greenSub1Left.src="./green-1left.png";
+var greenSub1Right=new Image();
+greenSub1Right.src="./green-1right.png";
+var greenPlus1=new Image();
+greenPlus1.src="./green+1.png";
+var blue0=new Image();
+blue0.src="./blue.png";
+var blueSub1=new Image();
+blueSub1.src="./blue-1.png";
+var blueSub1Left=new Image();
+blueSub1Left.src="./blue-1left.png";
+var blueSub1Right=new Image();
+blueSub1Right.src="./blue-1right.png";
+var bluePlus1=new Image();
+bluePlus1.src="./blue+1.png";
+var tree1=new Image();
+tree1.src="./tree-1.png";
+//player stuff
+var px=610;
+var pxSizeOffset=11; //const //half img width
+var pxspeed=0;
+var pxspeedPower=4;//4 normal; 6 debug; //const
+var py=230;
+var pySizeOffset=40; //const
+var pyspeed=0;
+var pyspeedPower=3;//2 normal; 4 debug; //const
+var pheight=0;
+var pjump=0;
+var pjumpPower=12; //const
+var pgravity=2; //const
+var playerIsBelowGround=false;
+var player=new Image();
+player.src="./player.png";
+function moveLeft(){
+ pxspeed=pxspeedPower;
+}
+function moveUp(){
+ pyspeed=pyspeedPower;
+}
+function moveRight(){
+ pxspeed=-pxspeedPower;
+}
+function moveDown(){
+ pyspeed=-pyspeedPower;
+}
+function stopMoveHorizontal(){
+ pxspeed=0;
+}
+function stopMoveVertical(){
+ pyspeed=0;
+}
+function jump(){
+ pjump=pjumpPower;
+}
+document.addEventListener("keydown",function(e){
+ switch (e.which) {
+  case 32: jump(); break;
+  case 37: moveLeft(); break;
+  case 38: moveUp(); break; //key-up
+  case 39: moveRight(); break;
+  case 40: moveDown(); break; //key-down
+  default: return; // exit this handler for other keys
+ }
+ e.preventDefault();
+});
+document.addEventListener("keyup",function(e){
+ switch (e.which) {
+  case 37: stopMoveHorizontal(); break;
+  case 38: stopMoveVertical(); break; //key-up
+  case 39: stopMoveHorizontal(); break;
+  case 40: stopMoveVertical(); break; //key-down
+  default: return; // exit this handler for other keys
+ }
+ e.preventDefault();
+});
+function getTileIndex(x,y){
+ //offset x,y so 0,0 is center of top-left corner tile
+ var ox=x+tileW2;
+ var oy=y+tileH2;
+ var gx=Math.floor(ox/tileW);
+ var gy=Math.floor(oy/tileH)*2;
+ var nx=(ox%tileW)/tileW;
+ var ny=(oy%tileH)/tileH;
+ var w=nx+ny;
+ if(w<0.5){--gx;--gy;}
+ else if(w>1.5){++gy;}
+ else{
+  var v=nx-ny;
+  if(v<-0.5){--gx;++gy;}
+  else if(v>0.5){--gy;}
+ }
+ return {x:gx,y:gy};
+}
+function getGround(x,y){
+ var tile=getTileIndex(x,y);
+ return getGroundFromTile(tile);
+}
+function getGroundFromTile(tile){
+ if(tile.x<0 || tile.y<0 || tile.y>=tileDepth.length || tile.x>=tileDepth[0].length){
+  return 0;
+ }else{
+  return tileDepth[tile.y][tile.x]*-32;
+ }
+}
+function drawTile(d,x,y,leftAboveD,rightAboveD){
+ if(d<0){
+  var currentDepth=0;
+  for(;currentDepth>d;--currentDepth){
+   if(leftAboveD>=currentDepth && rightAboveD>=currentDepth){
+    drawImage(greenSub1,x,y);
+   }else if(leftAboveD>=currentDepth){
+    drawImage(greenSub1Left,x,y);
+   }else if(rightAboveD>=currentDepth){
+    drawImage(greenSub1Right,x,y);
+   }
+   y+=wallHeight;
+  }
+  drawImage(green0,x,y);
+  if((leftAboveD<0 && d>leftAboveD) || (rightAboveD<0 && d>rightAboveD)){
+   var minDepthEitherSide=rightAboveD==null || leftAboveD<rightAboveD ? leftAboveD : rightAboveD;
+   y+=wallHeight2;
+   for(;currentDepth>minDepthEitherSide;--currentDepth){
+    if(leftAboveD>=currentDepth && rightAboveD>=currentDepth){
+     drawImage(greenSub1,x,y);
+    }else if(leftAboveD>=currentDepth){
+     drawImage(greenSub1Left,x+tileW2,y);
+    }else if(rightAboveD>=currentDepth){
+     drawImage(greenSub1Right,x-tileW2,y);
+    }
+    y+=wallHeight;
+   }
+  }
+ }else if(d>0){
+  for(var a=0;a<d;++a){
+   y-=wallHeight;
+   drawImage(greenPlus1,x,y+wallHeight2);
+  }
+  drawImage(green0,x,y);
+ }else{
+  drawImage(green0,x,y);
+ }
+}
+function drawImage(img,x,y){
+ tilemap.drawImage(img,x,y);
+}
+function redraw(playerTile){
+ tilemap.clearRect(0,0,tilemapW,tilemapH);
+ for(var gy=0;gy<tileDepth.length;++gy){
+  var r=tileDepth[gy];
+  var rAbove;
+  if(gy>1){
+   rAbove=tileDepth[gy-1];
+  }
+  var isEvenRow=gy%2===0;
+  var y=gy*tileH2-tileH2;
+  var hasHighGroundBetweenPlayerAndUnderground=null;
+  for(var gx=0;gx<r.length;++gx){
+   var d=r[gx];
+   var x=isEvenRow ? gx*tileW-tileW2 : gx*tileW;
+   var gx1=null,leftAboveD=null,rightAboveD=null;
+   if(d<0 && gy>1){
+    if(isEvenRow){
+     rightAboveD=rAbove[gx];
+     gx1=gx-1 //reuse var. left/above is previous column for even rows
+     if(gx1>=0){
+      leftAboveD=rAbove[gx1];
+     }
+    }else{
+     leftAboveD=rAbove[gx];
+     gx1=gx+1 //reuse var. right/above is same column for odd rows
+     if(gx1<r.length){
+      rightAboveD=rAbove[gx1];
+     }
+    }
+   }
+   if(d<0){
+    if(playerIsBelowGround && hasHighGroundBetweenPlayerAndUnderground===null){
+     var scanIncrement=null;
+     if(playerTile.y>gy){
+      scanIncrement=-1;
+     }else if(playerTile.y<gy){
+      scanIncrement=1;
+     }
+     if(scanIncrement!==null){
+      for(var a=playerTile.y+scanIncrement;scanIncrement===1 ? a<gy : a>gy && !hasHighGroundBetweenPlayerAndUnderground;a+=scanIncrement){
+       if(tileDepth[a][playerTile.x]>=0){
+        hasHighGroundBetweenPlayerAndUnderground=true;
+       }
+      }
+      var clearPathToCurrentSection=false;
+      for(var b=-1;b<2 && !clearPathToCurrentSection;++b){
+       var sidePX=playerTile.x+b;
+       // b===0 is the above check
+       if(b!==0 && sidePX>0 && sidePX<r.length){
+        clearPathToCurrentSection=true;
+        for(var a=playerTile.y+scanIncrement;clearPathToCurrentSection && scanIncrement===1 ? a<gy : a>gy;a+=scanIncrement){
+         if(tileDepth[a][sidePX]>=0){
+          clearPathToCurrentSection=false;
+         }
+        }
+       }
+      }
+     }
+    }
+    if(hasHighGroundBetweenPlayerAndUnderground){
+     // nulls should fall into the second case for since there shouldn't be any
+     // high ground between the player and that section of the the underground
+     tilemap.globalAlpha=seeBehindTileOpacity;
+     // HACKY?: set depth of tile to 0 to make the semi-transparent parts of the
+     // terain hide the other underground sections. There may be a flash of 0 terrain
+     // for a few frames when the player first comes above ground, but I am going to
+     // ignore that for now as it is not super annoying just yet and I don't want to
+     // spend the extra time fixing it
+     if(!clearPathToCurrentSection){
+      d=0;
+     }
+    }else{
+     tilemap.globalAlpha=1.0;
+    }
+   }else{
+    tilemap.globalAlpha=seeBehindTileOpacity;
+   }
+   drawTile(d,x,y,leftAboveD,rightAboveD);
+  }
+  if(playerTile.y===gy){
+   tilemap.globalAlpha=1.0;
+   drawImage(player,px-pxSizeOffset,py-pySizeOffset+pheight);
+  }
+ }
+}
+function advanceGameTime(){
+ if(pxspeed!=0){
+  var nextpx=px-pxspeed
+  var pground=getGround(nextpx,py);
+  if(pheight<=pground){
+   px=nextpx;
+  }
+ }
+ if(pyspeed!=0){
+  var nextpy=py-pyspeed
+  var pground=getGround(px,nextpy);
+  if(pheight<=pground){
+   py=nextpy;
+  }
+ }
+ var playerTile=getTileIndex(px,py);
+ var pground=getGroundFromTile(playerTile);
+ if(pheight<pground || pjump!==0){
+  pheight-=pjump;
+  pjump-=pgravity;
+ }
+ if(pheight>=pground){
+  pjump=0;
+  pheight=pground;
+ }
+ if(pheight>10 && seeBehindTileOpacity>seeBehindTileOpacityMin){
+  playerIsBelowGround=true;
+  seeBehindTileOpacity-=0.05;
+  if(seeBehindTileOpacity<seeBehindTileOpacityMin){
+   seeBehindTileOpacity=seeBehindTileOpacityMin;
+  }
+ }else if(pheight<=0 && seeBehindTileOpacity<1){
+  playerIsBelowGround=false
+  seeBehindTileOpacity+=0.15;
+  if(seeBehindTileOpacity>1){
+   seeBehindTileOpacity=1;
+  }
+ }
+ redraw(playerTile);
+}
+setInterval(advanceGameTime, 20);
+</script>
+</body>
+</html>
