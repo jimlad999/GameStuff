@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body,html {
+    background: black;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
+    font-family: "lucida console";
+    line-height: 18px;
+}
+body {
+    display: flex;
+}
+.hidden {
+    visibility: collapse;
+}
+input.chat {
+    /* to line up with chat-history */
+    width: 287px;
+    padding: 5px;
+}
+.chat-history {
+    width: 300px;
+    height: 500px;
+    background: white;
+    overflow-y: scroll;
+
+    display: flex;
+    flex-direction: column;
+}
+.chat-item {
+    position: relative;
+    width: 85%;
+    margin-bottom: 5px;
+}
+.chat-item-who {
+    position: absolute;
+    width: 100px;
+    padding: 1px 10px;
+    margin: 1px 5px;
+    border-radius: 0.5em;
+    box-shadow: 1px 1px white, -1px 1px white;
+}
+.chat-item-text {
+    padding: 10px 10px 5px;
+    margin: 0 5px;
+    margin-top: 15px;
+    border-radius: 0.5em;
+}
+.chat-item-text ~ .chat-item-text {
+    margin-top: 1px;
+}
+.npc-chat-item,
+.system-chat-item {
+    align-self: flex-start;
+}
+.npc-chat-item p {
+    background: lightgreen;
+}
+.system-chat-item p {
+    background: lightgrey;
+}
+.player-chat-item {
+    align-self: flex-end;
+}
+.player-chat-item p {
+    background: lightblue;
+}
+.player-chat-item .chat-item-who {
+    right: 0;
+}
+.inventory {
+    width: 300px;
+    height: 528px;
+    background: white;
+    overflow-y: scroll;
+
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-content: flex-start;
+}
+.inventory .item {
+    width: 100px;
+    height: 100px;
+    padding: 10px;
+    margin: 5px;
+    background: lightgrey;
+    align-content: center;
+}
+</style>
+</head>
+<body>
+    <div>
+        <div id="chat_history" class="chat-history"></div>
+        <div>
+            <input id="chat" class="chat" type="text" name="command" placeholder="Enter action or keyword..." />
+        </div>
+    </div>
+    <div id="inventory" class="inventory hidden"></div>
+</body>
+<script type="text/javascript">
+    var chatHistory = [];
+    var chatHistoryIdx = -1;
+    var chatHistoryElem = document.getElementById("chat_history");
+    var chatElem = document.getElementById("chat");
+    var inventoryElem = document.getElementById("inventory");
+    var showInventory = false;
+
+    function showInventoryElem() {
+        var alreadyHidden = inventoryElem.classList.contains("hidden");
+        if (showInventory) {
+            if (alreadyHidden) {
+                inventoryElem.classList.remove("hidden");
+            }
+        } else if (!alreadyHidden) {
+            inventoryElem.classList.add("hidden");
+        }
+    }
+    function addItemElem(item) {
+        var itemElem = document.createElement("div");
+        itemElem.classList.add("item");
+        itemElem.classList.add(item.key);
+        var itemNameElem = document.createElement("div");
+        itemNameElem.classList.add("item-name");
+        itemNameElem.innerHTML = item.name;
+        itemElem.appendChild(itemNameElem);
+        var itemCountElem = document.createElement("div");
+        itemCountElem.classList.add("item-count");
+        itemCountElem.innerHTML = item.count;
+        itemElem.appendChild(itemCountElem);
+        inventoryElem.appendChild(itemElem);
+    }
+    function updateItemElem(item) {
+        var itemElem = inventoryElem.getElementsByClassName(item.key)[0];
+        var itemCountElem = itemElem.getElementsByClassName("item-count")[0];
+        itemCountElem.innerHTML = item.count.toFixed(0);
+    }
+    function removeItemElem(item) {
+        var itemElem = inventoryElem.getElementsByClassName(item.key)[0];
+        itemElem.remove();
+    }
+
+    function itemNameToKey(itemName) {
+        return itemName.trim().toLowerCase().replace("'","").replace(/\s+/g, "_");
+    };
+    var items = {
+        "bread": { key: "bread", name: "Bread", description: "Some nice bread", count: 1, tradable: true },
+        "cake": { key: "cake", name: "Cake", description: "A fancy cake", count: 1, tradable: true },
+        "wooden_stick": { key: "wooden_stick", name: "Wooden stick", description: "It's just a wooden stick", count: 1, tradable: true },
+        "quest_item": { key: "quest_item", name: "Quest item", description: "Something absolutely not to be sold", count: 1, tradable: false },
+        "princesss_ring": { key: "princesss_ring", name: "Princess's ring", description: "Something absolutely not to be sold", count: 1, tradable: true }
+    };
+    var inventory = [];
+    function giveItem(item) {
+        var existingItem = inventory.find(i => i.key === item.key);
+        if (existingItem) {
+            existingItem.count += item.count;
+        } else {
+            var itemToGive = items[item.key];
+            if (itemToGive) {
+                var updatedItem = { ...itemToGive, count: item.count };
+                inventory.push(updatedItem);
+                addItemElem(updatedItem);
+            } else {
+                // TODO: deal with errors later
+                console.log(`ERROR: Item "${item.key}" does not exist`);
+            }
+        }
+    };
+    function removeItem(itemIdx) {
+        var item = inventory[itemIdx];
+        item.count--;
+        if (item.count <= 0) {
+            inventory.splice(itemIdx, 1)
+            removeItemElem(item);
+        } else {
+            updateItemElem(item);
+        }
+    };
+    giveItem({ key: "bread", count: 5 });
+    giveItem({ key: "cake", count: 1 });
+    giveItem({ key: "wooden_stick", count: 1 });
+    giveItem({ key: "quest_item", count: 1 });
+
+    var ownedKeys = {};
+    var thesaurus = {
+        "introduction": "intro",
+        "hi": "intro",
+        "chat": "talk"
+    };
+    var npc = {
+        name: "Bruce",
+        thesaurus: {
+            "ring": "princesss_ring",
+        },
+        chat: [
+            // first key should be simple. first key is shown as "hint". can use thesaurus to work around complex keys.
+            { keys: ["intro"], requiredKeys: [], hintKeys: [], interactions: [{ conditions: [], text: ["Hi. I am Bruce"], keysGiven: [], itemsGiven: [] }] },
+            { keys: ["talk"], requiredKeys: [], hintKeys: [], interactions: [
+                { conditions: [{hasNot: "church-0001"}, {hasNot: "ring-0001"}], text: ["I am so hungry"], keysGiven: ["hungry-0001"], itemsGiven: [] },
+                { conditions: [], text: ["Thank you for giving me food"], keysGiven: [], itemsGiven: [] }
+            ] },
+            { keys: ["hungry"], requiredKeys: [], hintKeys: ["hungry-0001"], interactions: [
+                { conditions: [{hasNot: "church-0001"}, {hasNot: "ring-0001"}], text: ["Will you give me some food?"], keysGiven: [], itemsGiven: [] },
+                { conditions: [], text: ["Will you give me some more food?"], keysGiven: [], itemsGiven: [] }
+            ] },
+            { keys: ["give bread"], requiredKeys: [], hintKeys: [], interactions: [{ conditions: [], text: ["Thank you. The church gives this out often"], keysGiven: ["church-0001"], itemsGiven: [] }] },
+            { keys: ["give cake"], requiredKeys: [], hintKeys: [], interactions: [{ conditions: [], text: ["Thank you. There was princess with a fancy ring eats this a lot"], keysGiven: ["ring-0001"], itemsGiven: [] }] },
+            { keys: ["church"], requiredKeys: [], hintKeys: ["church-0001"], interactions: [{ conditions: [], text: ["Church is nice and gives bread out to the poor"], keysGiven: [], itemsGiven: [] }] },
+            { keys: ["ring","princess","princesss_ring"], requiredKeys: ["ring-0001"], hintKeys: ["ring-0001"], interactions: [
+                { conditions: [{ hasNot: "ring-0002" }], text: ["I found this ring on the ground. It is probably the princess's","Here. I will give it to as thank you for the cake"], keysGiven: ["ring-0002"], itemsGiven: [{ key: "princesss_ring", count: 1 }] },
+                { conditions: [], text: ["Maybe you can give the ring back to the princess"], keysGiven: [], itemsGiven: [] }
+            ] }
+        ]
+    };
+    function hasKey(keys) {
+        return keys.length === 0 || keys.some(k => ownedKeys[k]);
+    }
+    function meetsCondition(interaction) {
+        return interaction.conditions.every(c => (c.hasNot && !ownedKeys[c.hasNot]) || (c.has && ownedKeys[c.has]));
+    }
+    function distinct(arr) {
+        return Object.keys(arr.reduce((acc, curr) => { acc[curr] = true; return acc; }, {}));
+    }
+    function getName(who) {
+        return who.name;
+    };
+    function getResponse(who, text) {
+        function getKey(text) {
+            var trimmedText = text.trim().toLowerCase();
+            return who.thesaurus[trimmedText] || thesaurus[trimmedText] || trimmedText;   
+        }
+        var key = getKey(text);
+        if (key === "hint") {
+            var validChatKeys = who.chat
+                // remove give commands as they aren't hints
+                .filter(c => !c.keys.some(k => k.includes("give")) && hasKey(c.hintKeys))
+                // first key is good enough
+                .map(c => c.keys[0]);
+            var distinctChatKeys = distinct(validChatKeys);
+            var hints = distinctChatKeys.slice(1).reduce((acc, curr) => acc + ", " + curr, distinctChatKeys[0]);
+            return {
+                name: "System",
+                text: [hints]
+            };
+        } else if (key === "give") {
+            return {
+                name: "System",
+                text: ["Give what?"],
+                action: "show_inventory"
+            };
+        } else {
+            // only expect 0 or 1 chat items
+            var chatItem = who.chat.filter(c => c.keys.indexOf(key) > -1 && hasKey(c.requiredKeys))[0];
+            function giveStandardResponse() {
+                // expect to be at least one valid interaction. otherwise chat item is configured wrong.
+                var interaction = chatItem.interactions.filter(meetsCondition)[0];
+                interaction.keysGiven.forEach(k => ownedKeys[k] = true);
+                // hint keys are given in case they weren't previously owned when player guesses a chat item that they meet the requirements for but may not have the hints for
+                chatItem.hintKeys.forEach(k => ownedKeys[k] = true);
+                interaction.itemsGiven.forEach(giveItem);
+                return {
+                    name: getName(who),
+                    text: interaction.text
+                };
+            }
+            if (key.startsWith("give ")) {
+                // substring to remove "give "
+                var itemText = key.substring(5);
+                var itemKey = getKey(itemNameToKey(itemText));
+                var itemIdx = inventory.findIndex(i => i.key === itemKey);
+                if (itemIdx > -1) {
+                    var item = inventory[itemIdx];
+                    if (!item.tradable) {
+                        return {
+                            name: "System",
+                            text: [`You cannot't give "${itemText}" away`]
+                        };
+                    } else if (chatItem == null) {
+                        return {
+                            name: getName(who),
+                            text: ["I don't need that"]
+                        };
+                    } else {
+                        removeItem(itemIdx);
+                        return giveStandardResponse();   
+                    }
+                } else {
+                    return {
+                        name: "System",
+                        text: [`You don't have any "${itemText}" to give`, "Give what?"],
+                        action: "show_inventory"
+                    };
+                }
+            } else if (chatItem == null) {
+                return {
+                    name: "System",
+                    text: [`"${text}" is not valid in this context. Try "hint" to see available options`]
+                };
+            } else {
+                return giveStandardResponse();
+            }
+        }
+    };
+    function createChatItem(name, text) {
+        var newChatItem = document.createElement("div");
+        newChatItem.classList.add("chat-item");
+        newChatItem.classList.add(name === "Player" ? "player-chat-item" : name === "System" ? "system-chat-item" : "npc-chat-item");
+        var newChatItemWho = document.createElement("p");
+        newChatItemWho.innerHTML = name;
+        newChatItemWho.classList.add("chat-item-who");
+        newChatItem.appendChild(newChatItemWho);
+        text.forEach(t => {
+            var newChatItemText = document.createElement("p");
+            newChatItemText.classList.add("chat-item-text");
+            newChatItemText.innerHTML = t;
+            newChatItem.appendChild(newChatItemText);
+        });
+        return newChatItem;
+    };
+    chatElem.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+            var text = chatElem.value;
+            if (text) {
+                chatHistory.push(text);
+                chatHistoryIdx = -1;
+                var newChatItem = createChatItem("Player", [text]);
+                chatHistoryElem.appendChild(newChatItem);
+                var response = getResponse(npc, text);
+                newChatItem = createChatItem(response.name, response.text);
+                chatHistoryElem.appendChild(newChatItem);
+                chatHistoryElem.scrollTop = chatHistoryElem.scrollHeight;
+                chatElem.value = "";
+                if (response.action === "show_inventory") {
+                    showInventory = true;
+                    showInventoryElem();
+                } else if (showInventory) {
+                    showInventory = false;
+                    showInventoryElem();
+                }
+            }
+        } else if(e.key === "ArrowUp" && chatHistoryIdx !== 0) {
+            if (--chatHistoryIdx < 0) {
+                chatHistoryIdx = chatHistory.length - 1;
+            }
+            if (chatHistoryIdx > -1) {
+                chatElem.value = chatHistory[chatHistoryIdx];
+            }
+        } else if(e.key === "ArrowDown" && chatHistoryIdx > -1) {
+            if (++chatHistoryIdx >= chatHistory.length) {
+                chatHistoryIdx = -1;
+                chatElem.value = "";
+            } else {
+                chatElem.value = chatHistory[chatHistoryIdx];
+            }
+        }
+    });
+</script>
+</html>
