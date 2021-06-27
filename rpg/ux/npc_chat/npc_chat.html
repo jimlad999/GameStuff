@@ -118,7 +118,7 @@ input.chat {
         } else if (!alreadyHidden) {
             inventoryElem.classList.add("hidden");
         }
-    }
+    };
     function addItemElem(item) {
         var itemElem = document.createElement("div");
         itemElem.classList.add("item");
@@ -132,16 +132,16 @@ input.chat {
         itemCountElem.innerHTML = item.count;
         itemElem.appendChild(itemCountElem);
         inventoryElem.appendChild(itemElem);
-    }
+    };
     function updateItemElem(item) {
         var itemElem = inventoryElem.getElementsByClassName(item.key)[0];
         var itemCountElem = itemElem.getElementsByClassName("item-count")[0];
         itemCountElem.innerHTML = item.count.toFixed(0);
-    }
+    };
     function removeItemElem(item) {
         var itemElem = inventoryElem.getElementsByClassName(item.key)[0];
         itemElem.remove();
-    }
+    };
 
     function itemNameToKey(itemName) {
         return itemName.trim().toLowerCase().replace("'","").replace(/\s+/g, "_");
@@ -218,13 +218,13 @@ input.chat {
     };
     function hasKey(keys) {
         return keys.length === 0 || keys.some(k => ownedKeys[k]);
-    }
+    };
     function meetsCondition(interaction) {
         return interaction.conditions.every(c => (c.hasNot && !ownedKeys[c.hasNot]) || (c.has && ownedKeys[c.has]));
-    }
+    };
     function distinct(arr) {
         return Object.keys(arr.reduce((acc, curr) => { acc[curr] = true; return acc; }, {}));
-    }
+    };
     function getName(who) {
         return who.name;
     };
