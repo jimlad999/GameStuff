@@ -47,16 +47,14 @@ function getPlayer() {
    // collision detection: walls
    if(this.xSpeed!=0){
     var nextpx=this.x-this.xSpeed;
-    pground=tiles.getGround(nextpx,this.y);
-    if(this.height>=pground){
+    if(!tiles.checkCollision(nextpx,this.y,this.height)){
      this.x=nextpx;
     }
    }
    if(this.ySpeed!=0){
     //adjust speed so that moving in diagonal motion aligns with the grid
     var nextpy=this.y-(this.xSpeed===0?this.ySpeed:this.ySpeed>0?2:-2);
-    pground=tiles.getGround(this.x,nextpy);
-    if(this.height>=pground){
+    if(!tiles.checkCollision(this.x,nextpy,this.height)){
      this.y=nextpy;
     }
    }

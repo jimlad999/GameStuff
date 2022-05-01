@@ -20,19 +20,35 @@ function initTileFunctions(tileSets, tileData){
    }
    return {x:gx,y:gy};
   },
+  getTileData: function(tile){
+   return this.tileData[tile.y][tile.x]
+  },
   getGroundDepthFromTile: function(tile){
    if(tile.x<0 || tile.y<0 || tile.y>=this.tileData.length || tile.x>=this.tileData[0].length){
     return 0;
    }else{
-    return this.tileData[tile.y][tile.x].depth;
+    return this.getTileData(tile).depth;
    }
   },
+  getGroundFromTileData: function(tileData){
+   return !tileData?0:tileData.depth*tileSets.wallHeight;
+  },
   getGroundFromTile: function(tile){
-   return this.getGroundDepthFromTile(tile)*32;
+   return this.getGroundDepthFromTile(tile)*tileSets.wallHeight;
   },
   getGround: function(x,y){
    var tile=this.getTileIndex(x,y);
    return this.getGroundFromTile(tile);
+  },
+  /** return true if collision detected */
+  checkCollision: function(x,y,height){
+   var tile=this.getTileIndex(x,y);
+   var tileData=this.getTileData(tile);
+   if(tileData.collision){
+    return true;
+   }
+   var ground=this.getGroundFromTileData(tileData);
+   return height<ground
   },
   isMajorTile: function(x,y){
    return (x*2+y)%2===0;
