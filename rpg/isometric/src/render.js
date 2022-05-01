@@ -1,4 +1,4 @@
-function initRenderer(tiles, tilemap, player, viewport, mouse) {
+function initRenderer(environment, tilemap, player, viewport, mouse) {
  return {
   seeBehindTileOpacity: 1,
   seeBehindTileOpacityMin: 0.1,
@@ -10,7 +10,7 @@ function initRenderer(tiles, tilemap, player, viewport, mouse) {
    this.drawImage(imageObject.image,x+imageObject.xOffset,y-imageObject.yOffset);
   },
   drawTile: function(d,x,y,leftAboveD,rightAboveD,tileColour){
-   var tileSet=tiles.tileSets[tileColour];
+   var tileSet=environment.tileSets[tileColour];
    if(d<0){
     var currentDepth=0;
     for(;currentDepth>d;--currentDepth){
@@ -21,7 +21,7 @@ function initRenderer(tiles, tilemap, player, viewport, mouse) {
      }else if(rightAboveD>=currentDepth){
       this.drawImage(tileSet["Sub1Right"],x,y);
      }
-     y+=tiles.tileSets.wallHeight;
+     y+=environment.tileSets.wallHeight;
     }
     this.drawImage(tileSet["0"],x,y);
     for(var shadeLevel=0;shadeLevel>d;--shadeLevel){
@@ -29,22 +29,22 @@ function initRenderer(tiles, tilemap, player, viewport, mouse) {
     }
     if((leftAboveD<0 && d>leftAboveD) || (rightAboveD<0 && d>rightAboveD)){
      var minDepthEitherSide=rightAboveD==null || leftAboveD<rightAboveD ? leftAboveD : rightAboveD;
-     y+=tiles.tileSets.wallHeightHalf;
+     y+=environment.tileSets.wallHeightHalf;
      for(;currentDepth>minDepthEitherSide;--currentDepth){
       if(leftAboveD>=currentDepth && rightAboveD>=currentDepth){
        this.drawImage(tileSet["Sub1"],x,y);
       }else if(leftAboveD>=currentDepth){
-       this.drawImage(tileSet["Sub1Left"],x+tiles.tileSets.tileWidthHalf,y);
+       this.drawImage(tileSet["Sub1Left"],x+environment.tileSets.tileWidthHalf,y);
       }else if(rightAboveD>=currentDepth){
-       this.drawImage(tileSet["Sub1Right"],x-tiles.tileSets.tileWidthHalf,y);
+       this.drawImage(tileSet["Sub1Right"],x-environment.tileSets.tileWidthHalf,y);
       }
-      y+=tiles.tileSets.wallHeight;
+      y+=environment.tileSets.wallHeight;
      }
     }
    }else if(d>0){
     for(var a=0;a<d;++a){
-     y-=tiles.tileSets.wallHeight;
-     this.drawImage(tileSet["Plus1"],x,y+tiles.tileSets.wallHeightHalf);
+     y-=environment.tileSets.wallHeight;
+     this.drawImage(tileSet["Plus1"],x,y+environment.tileSets.wallHeightHalf);
     }
     this.drawImage(tileSet["0"],x,y);
     for(var shadeLevel=0;shadeLevel<d;++shadeLevel){
@@ -72,22 +72,22 @@ function initRenderer(tiles, tilemap, player, viewport, mouse) {
   redraw: function(){
    this.updateTerrainOpacity();
    tilemap.clearRect(0,0,viewport.width,viewport.height);
-   var playerTile=tiles.getTileIndex(player.x,player.y);
-   var isTileWithinPlayerSight=tiles.getSurroundingTiles(playerTile.x,playerTile.y,3);
+   var playerTile=environment.getTileIndex(player.x,player.y);
+   var isTileWithinPlayerSight=environment.getSurroundingTiles(playerTile.x,playerTile.y,3);
    var pd=Math.round(player.height/32);
    var drawPlayerMarker=false;
-   for(var gy=0;gy<tiles.tileData.length;++gy){
-    var r=tiles.tileData[gy];
+   for(var gy=0;gy<environment.tileData.length;++gy){
+    var r=environment.tileData[gy];
     var rAbove;
     if(gy>1){
-     rAbove=tiles.tileData[gy-1];
+     rAbove=environment.tileData[gy-1];
     }
     var isEvenRow=gy%2===0;
-    var y=(gy-1)*tiles.tileSets.tileHeightHalf;
+    var y=(gy-1)*environment.tileSets.tileHeightHalf;
     for(var gx=0;gx<r.length;++gx){
      var tileData=r[gx];
      var d=tileData.depth;
-     var x=isEvenRow ? gx*tiles.tileSets.tileWidth-tiles.tileSets.tileWidthHalf : gx*tiles.tileSets.tileWidth;
+     var x=isEvenRow ? gx*environment.tileSets.tileWidth-environment.tileSets.tileWidthHalf : gx*environment.tileSets.tileWidth;
      var tileIsWithinPlayerSight=isTileWithinPlayerSight(gx,gy);
      var gx1=null,leftAboveD=null,rightAboveD=null;
      if(d<0 && gy>1){
@@ -107,8 +107,8 @@ function initRenderer(tiles, tilemap, player, viewport, mouse) {
      }
      if(d<0 && player.isBelowGround){
       var clearPathToCurrentSection=tileIsWithinPlayerSight &&
-       tiles.getPath(gx,gy,playerTile.x,playerTile.y).every(a => {
-        var pathDepth=tiles.tileData[a.y][a.x].depth;
+       environment.getPath(gx,gy,playerTile.x,playerTile.y).every(a => {
+        var pathDepth=environment.tileData[a.y][a.x].depth;
         return pathDepth<0 && (pathDepth-pd)<=2
       });
       if(clearPathToCurrentSection){
@@ -132,10 +132,10 @@ function initRenderer(tiles, tilemap, player, viewport, mouse) {
      //only draw objects above ground if player is above ground. always draw objects underground as they will be drawn over anyway
      if(d<0 || !player.isBelowGround){
       tileData.objects.forEach(objectKey=>{
-       var imageObject=tiles.tileSets[objectKey];
+       var imageObject=environment.tileSets[objectKey];
        //d*wallHeight to draw objects on the ground
        //TODO: work out how to draw floating objects?
-       this.drawObject(imageObject,x,y+d*tiles.tileSets.wallHeight);
+       this.drawObject(imageObject,x,y+d*environment.tileSets.wallHeight);
       });
      }
     }

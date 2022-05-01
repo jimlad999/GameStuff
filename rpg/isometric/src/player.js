@@ -45,7 +45,7 @@ function getPlayer() {
   jump: function(){
    this.jumpSpeed=this.jumpPower;
   },
-  update: function(tiles){
+  update: function(environment){
    var pground=null,
     collisionCheck=null,
     xSpeed=this.xSpeed,
@@ -53,7 +53,7 @@ function getPlayer() {
    // collision detection: walls
    if(xSpeed!=0){
     var nextpx=this.x-xSpeed;
-    collisionCheck=tiles.checkCollision(nextpx,this.y,this.height);
+    collisionCheck=environment.checkCollision(nextpx,this.y,this.height);
     if(collisionCheck.collision){
      //push along wall
      if(this.ySpeed===0){
@@ -70,7 +70,7 @@ function getPlayer() {
    if(ySpeed!=0){
     //adjust speed so that moving in diagonal motion aligns with the grid
     var nextpy=this.y-ySpeed;
-    collisionCheck=tiles.checkCollision(this.x,nextpy,this.height);
+    collisionCheck=environment.checkCollision(this.x,nextpy,this.height);
     if(collisionCheck.collision){
      //push along wall
      if(this.xSpeed===0){
@@ -83,7 +83,7 @@ function getPlayer() {
       }
       if(xSpeed!=0){
        var nextpx=this.x-xSpeed;
-       collisionCheck=tiles.checkCollision(nextpx,this.y,this.height);
+       collisionCheck=environment.checkCollision(nextpx,this.y,this.height);
        if(!collisionCheck.collision){
         this.x=nextpx;
        }
@@ -94,7 +94,7 @@ function getPlayer() {
     }
    }
    // collision detection: ground
-   pground=tiles.getGround(this.x,this.y);
+   pground=environment.getGround(this.x,this.y);
    if(this.height>pground || this.jumpSpeed!==0){
     this.height+=this.jumpSpeed;
     this.jumpSpeed-=this.gravity;

@@ -1,4 +1,4 @@
-function initTileFunctions(tileSets, tileData){
+function initEnvironment(tileSets, tileData){
  return {
   tileSets,
   tileData:tileData.tileData,

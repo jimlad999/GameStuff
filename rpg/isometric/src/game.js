@@ -65,9 +65,9 @@ var editMode=false;//HACK: global state to enable setting this via the console.
 fetch('http://localhost:9000/assets/tile_depth.json')
   .then(response => response.json())
   .then(data => {
-   var tiles=initTileFunctions(tileSets, upgradeTileData(data));
-   var mouse=addMouseListener(tiles, viewport);
-   var renderer=initRenderer(tiles, tilemap, player, viewport, mouse);
-   var game=initGame(tiles, renderer, player);
+   var environment=initEnvironment(tileSets, upgradeTileData(data));
+   var mouse=addMouseListener(environment, viewport);
+   var renderer=initRenderer(environment, tilemap, player, viewport, mouse);
+   var game=initGame(environment, renderer, player);
    setInterval(game.advanceGameTime, 20);
   });

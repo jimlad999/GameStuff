@@ -1,7 +1,7 @@
-function initGame(tiles, renderer, player){
+function initGame(environment, renderer, player){
  return {
   advanceGameTime: function(){
-   player.update(tiles);
+   player.update(environment);
    renderer.redraw();
   }
  };
