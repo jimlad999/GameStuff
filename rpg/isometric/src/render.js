@@ -58,7 +58,8 @@ function initRenderer(tiles, tilemap, player, viewport) {
   redraw: function(playerTile){
    tilemap.clearRect(0,0,viewport.width,viewport.height);
    var isTileWithinPlayerSight=tiles.getSurroundingTiles(playerTile.x,playerTile.y,3);
-   var pd=tiles.tileDepth[playerTile.y][playerTile.x];
+   var pd=Math.round(player.height/-32);
+   var drawPlayerMarker=false;
    for(var gy=0;gy<tiles.tileDepth.length;++gy){
     var r=tiles.tileDepth[gy];
     var rAbove;
@@ -75,28 +76,31 @@ function initRenderer(tiles, tilemap, player, viewport) {
      if(d<0 && gy>1){
       if(isEvenRow){
        rightAboveD=rAbove[gx];
-       gx1=gx-1 //reuse var. left/above is previous column for even rows
+       gx1=gx-1 //left/above is previous column for even rows
        if(gx1>=0){
         leftAboveD=rAbove[gx1];
        }
       }else{
        leftAboveD=rAbove[gx];
-       gx1=gx+1 //reuse var. right/above is same column for odd rows
+       gx1=gx+1 //right/above is same column for odd rows
        if(gx1<r.length){
         rightAboveD=rAbove[gx1];
        }
       }
      }
      if(d<0 && player.isBelowGround){
-      var clearPathToCurrentSection=tileIsWithinPlayerSight && (
-        (d-pd)<=2 || tiles.getPath(gx,gy,playerTile.x,playerTile.y).every(a => (tiles.tileDepth[a.y][a.x]-pd)<=2)
-       );
+      var clearPathToCurrentSection=tileIsWithinPlayerSight &&
+       tiles.getPath(gx,gy,playerTile.x,playerTile.y).every(a => (tiles.tileDepth[a.y][a.x]-pd)<=2);
       if(clearPathToCurrentSection){
        tilemap.globalAlpha=1.0;
       }else{
        tilemap.globalAlpha=this.seeBehindTileOpacity;
        d=0;
       }
+     }else if(d>=0 && d>pd && !player.isBelowGround &&
+      d-pd>2 && gy>playerTile.y && tileIsWithinPlayerSight && Math.abs(gx-playerTile.x)<=1
+      ){
+      drawPlayerMarker=true;
      }else{
       tilemap.globalAlpha=this.seeBehindTileOpacity;
      }
@@ -110,6 +114,10 @@ function initRenderer(tiles, tilemap, player, viewport) {
      tilemap.globalAlpha=1.0;
      this.drawImage(player.image,player.x-player.xSizeOffset,player.y-player.ySizeOffset+player.height);
     }
+   }
+   if(drawPlayerMarker){
+    tilemap.globalAlpha=1.0;
+    this.drawImage(player.marker,player.x-player.markerXSizeOffset,player.y-player.markerYSizeOffset-player.ySizeOffset+player.height-3);
    }
   }
  };

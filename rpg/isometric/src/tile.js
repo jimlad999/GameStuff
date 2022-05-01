@@ -20,12 +20,15 @@ function initTileFunctions(tileSets, tileDepth){
    }
    return {x:gx,y:gy};
   },
-  getGroundFromTile: function(tile){
+  getGroundDepthFromTile: function(tile){
    if(tile.x<0 || tile.y<0 || tile.y>=tileDepth.length || tile.x>=tileDepth[0].length){
     return 0;
    }else{
-    return tileDepth[tile.y][tile.x]*-32;
+    return tileDepth[tile.y][tile.x];
    }
+  },
+  getGroundFromTile: function(tile){
+   return this.getGroundDepthFromTile(tile)*-32;
   },
   getGround: function(x,y){
    var tile=this.getTileIndex(x,y);

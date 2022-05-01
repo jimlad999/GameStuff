@@ -17,6 +17,9 @@ function getPlayer() {
   image: new Image(),
   xSizeOffset: 11, //const //half img width
   ySizeOffset: 40, //const
+  marker: new Image(),
+  markerXSizeOffset: 3, //const //half img width
+  markerYSizeOffset: 10, //const
  
   moveLeft: function(){
    this.xSpeed=this.xSpeedPower;
@@ -41,5 +44,6 @@ function getPlayer() {
   }
  };
  player.image.src="./assets/player.png";
+ player.marker.src="./assets/player-marker.png";
  return player;
 };
