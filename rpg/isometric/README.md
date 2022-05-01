@@ -1,5 +1,11 @@
 # Isometric RPG tests
 
+## Getting started
+Javascript requires the [file-server.js](./file-server.js) to be running as a Nodejs server to server up the static level json files. In a console, run
+```bash
+node file-server.js
+```
+
 ## Math
 tldr; here is the code in javascript
 ```javascript
