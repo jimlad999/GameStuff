@@ -107,7 +107,10 @@ function initRenderer(tiles, tilemap, player, viewport) {
      }
      if(d<0 && player.isBelowGround){
       var clearPathToCurrentSection=tileIsWithinPlayerSight &&
-       tiles.getPath(gx,gy,playerTile.x,playerTile.y).every(a => (tiles.tileDepth[a.y][a.x]-pd)<=2);
+       tiles.getPath(gx,gy,playerTile.x,playerTile.y).every(a => {
+        var pathDepth=tiles.tileDepth[a.y][a.x];
+        return pathDepth<0 && (pathDepth-pd)<=2
+      });
       if(clearPathToCurrentSection){
        tilemap.globalAlpha=1.0;
       }else{

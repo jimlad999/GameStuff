@@ -71,9 +71,9 @@ function getPlayer() {
     this.height=pground;
    }
    // detecting "underground"
-   if(this.height<-10 ){
+   if(this.height<-42 ){
     this.isBelowGround=true;
-   }else if(this.height>=0 ){
+   }else if(this.height>=-30 ){
     this.isBelowGround=false
    }
   }
