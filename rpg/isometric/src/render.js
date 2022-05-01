@@ -55,8 +55,25 @@ function initRenderer(tiles, tilemap, player, viewport) {
     this.drawImage(tileSet["0"],x,y);
    }
   },
-  redraw: function(playerTile){
+  updateTerrainOpacity: function(){
+   if(player.isBelowGround && this.seeBehindTileOpacity>this.seeBehindTileOpacityMin){
+    // slower fade-out of above ground
+    this.seeBehindTileOpacity-=0.05;
+    if(this.seeBehindTileOpacity<this.seeBehindTileOpacityMin){
+     this.seeBehindTileOpacity=this.seeBehindTileOpacityMin;
+    }
+   }else if(!player.isBelowGround && this.seeBehindTileOpacity<this.seeBehindTileOpacityMax){
+    // faster fade-in of above ground so that above ground is revealed faster
+    this.seeBehindTileOpacity+=0.15;
+    if(this.seeBehindTileOpacity>this.seeBehindTileOpacityMax){
+     this.seeBehindTileOpacity=this.seeBehindTileOpacityMax;
+    }
+   }
+  },
+  redraw: function(){
+   this.updateTerrainOpacity();
    tilemap.clearRect(0,0,viewport.width,viewport.height);
+   var playerTile=tiles.getTileIndex(player.x,player.y);
    var isTileWithinPlayerSight=tiles.getSurroundingTiles(playerTile.x,playerTile.y,3);
    var pd=Math.round(player.height/-32);
    var drawPlayerMarker=false;
