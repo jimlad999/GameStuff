@@ -1,14 +1,13 @@
 function initRenderer(tiles, tilemap, player, viewport) {
- // TODO: refactor this
- var tree1=new Image();
- tree1.src="./assets/tree-1.png";
- // ===========
  return {
   seeBehindTileOpacity: 1,
   seeBehindTileOpacityMin: 0.1,
   seeBehindTileOpacityMax: 1,
   drawImage: function(img,x,y){
    tilemap.drawImage(img,x-viewport.x+viewport.widthHalf,y-viewport.y+viewport.heightHalf);
+  },
+  drawObject: function(imageObject,x,y){
+   this.drawImage(imageObject.image,x-imageObject.xOffset,y-imageObject.yOffset);
   },
   drawTile: function(d,x,y,leftAboveD,rightAboveD,tileColour){
    var tileSet=tiles.tileSets[tileColour];
@@ -77,38 +76,39 @@ function initRenderer(tiles, tilemap, player, viewport) {
    var isTileWithinPlayerSight=tiles.getSurroundingTiles(playerTile.x,playerTile.y,3);
    var pd=Math.round(player.height/32);
    var drawPlayerMarker=false;
-   for(var gy=0;gy<tiles.tileDepth.length;++gy){
-    var r=tiles.tileDepth[gy];
+   for(var gy=0;gy<tiles.tileData.length;++gy){
+    var r=tiles.tileData[gy];
     var rAbove;
     if(gy>1){
-     rAbove=tiles.tileDepth[gy-1];
+     rAbove=tiles.tileData[gy-1];
     }
     var isEvenRow=gy%2===0;
     var y=(gy-1)*tiles.tileSets.tileHeightHalf;
     for(var gx=0;gx<r.length;++gx){
-     var d=r[gx];
+     var tileData=r[gx];
+     var d=tileData.depth;
      var x=isEvenRow ? gx*tiles.tileSets.tileWidth-tiles.tileSets.tileWidthHalf : gx*tiles.tileSets.tileWidth;
      var tileIsWithinPlayerSight=isTileWithinPlayerSight(gx,gy);
      var gx1=null,leftAboveD=null,rightAboveD=null;
      if(d<0 && gy>1){
       if(isEvenRow){
-       rightAboveD=rAbove[gx];
+       rightAboveD=rAbove[gx].depth;
        gx1=gx-1 //left/above is previous column for even rows
        if(gx1>=0){
-        leftAboveD=rAbove[gx1];
+        leftAboveD=rAbove[gx1].depth;
        }
       }else{
-       leftAboveD=rAbove[gx];
+       leftAboveD=rAbove[gx].depth;
        gx1=gx+1 //right/above is same column for odd rows
        if(gx1<r.length){
-        rightAboveD=rAbove[gx1];
+        rightAboveD=rAbove[gx1].depth;
        }
       }
      }
      if(d<0 && player.isBelowGround){
       var clearPathToCurrentSection=tileIsWithinPlayerSight &&
        tiles.getPath(gx,gy,playerTile.x,playerTile.y).every(a => {
-        var pathDepth=tiles.tileDepth[a.y][a.x];
+        var pathDepth=tiles.tileData[a.y][a.x].depth;
         return pathDepth<0 && (pathDepth-pd)<=2
       });
       if(clearPathToCurrentSection){
@@ -128,10 +128,15 @@ function initRenderer(tiles, tilemap, player, viewport) {
        drawPlayerMarker=true;
       }
      }
-     this.drawTile(d,x,y,leftAboveD,rightAboveD,"green");//tileIsWithinPlayerSight?"blue":"green");
-     // HACK: draw a tree
-     if (gx===9 && gy===14) {
-      this.drawImage(tree1,x-16,y-60);
+     this.drawTile(d,x,y,leftAboveD,rightAboveD,tileData.pallete);
+     //only draw objects above ground if player is above ground. always draw objects underground as they will be drawn over anyway
+     if(d<0 || !player.isBelowGround){
+      tileData.objects.forEach(objectKey=>{
+       var imageObject=tiles.tileSets[objectKey];
+       //d*wallHeight to draw objects on the ground
+       //TODO: work out how to draw floating objects?
+       this.drawObject(imageObject,x,y+d*tiles.tileSets.wallHeight);
+      });
      }
     }
     if(playerTile.y===gy){

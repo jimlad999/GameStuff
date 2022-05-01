@@ -22,6 +22,8 @@ var bluePlus1=new Image();
 bluePlus1.src="./assets/blue+1.png";
 var blueShade=new Image();
 blueShade.src="./assets/blue-shade.png";
+var tree1=new Image();
+tree1.src="./assets/tree-1.png";
 var tileSets={
  tileWidth: 64, //const
  tileWidthHalf: 32, //tileW/2; //const
@@ -44,6 +46,11 @@ var tileSets={
   "Sub1Right":blueSub1Right,
   "Plus1":bluePlus1,
   "shade":blueShade
+ },
+ "tree1":{
+  image:tree1,
+  xOffset:16,
+  yOffset:60
  }
 };
 var canvas=document.getElementById("tilemap");
@@ -56,8 +63,8 @@ var keyboardListener=addKeyboardListener(player);
 //tile stuff
 fetch('http://localhost:9000/assets/tile_depth.json')
   .then(response => response.json())
-  .then(tileDepth => {
-   var tiles=initTileFunctions(tileSets, tileDepth);
+  .then(data => {
+   var tiles=initTileFunctions(tileSets, upgradeTileData(data));
    var renderer=initRenderer(tiles, tilemap, player, viewport);
    var game=initGame(tiles, renderer, player);
    setInterval(game.advanceGameTime, 20);

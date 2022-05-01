@@ -1,7 +1,7 @@
-function initTileFunctions(tileSets, tileDepth){
+function initTileFunctions(tileSets, tileData){
  return {
   tileSets,
-  tileDepth,
+  tileData:tileData.tileData,
   getTileIndex: function(x,y){
    //offset x,y so 0,0 is center of top-left corner tile
    var ox=x+tileSets.tileWidthHalf;
@@ -21,10 +21,10 @@ function initTileFunctions(tileSets, tileDepth){
    return {x:gx,y:gy};
   },
   getGroundDepthFromTile: function(tile){
-   if(tile.x<0 || tile.y<0 || tile.y>=tileDepth.length || tile.x>=tileDepth[0].length){
+   if(tile.x<0 || tile.y<0 || tile.y>=this.tileData.length || tile.x>=this.tileData[0].length){
     return 0;
    }else{
-    return tileDepth[tile.y][tile.x];
+    return this.tileData[tile.y][tile.x].depth;
    }
   },
   getGroundFromTile: function(tile){
