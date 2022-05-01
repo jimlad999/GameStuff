@@ -60,12 +60,14 @@ player.x=580;
 player.y=630;
 var viewport=initViewport(player,canvas);
 var keyboardListener=addKeyboardListener(player);
+var editMode=false;//HACK: global state to enable setting this via the console.
 //tile stuff
 fetch('http://localhost:9000/assets/tile_depth.json')
   .then(response => response.json())
   .then(data => {
    var tiles=initTileFunctions(tileSets, upgradeTileData(data));
-   var renderer=initRenderer(tiles, tilemap, player, viewport);
+   var mouse=addMouseListener(tiles, viewport);
+   var renderer=initRenderer(tiles, tilemap, player, viewport, mouse);
    var game=initGame(tiles, renderer, player);
    setInterval(game.advanceGameTime, 20);
   });

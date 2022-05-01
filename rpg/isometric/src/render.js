@@ -1,4 +1,4 @@
-function initRenderer(tiles, tilemap, player, viewport) {
+function initRenderer(tiles, tilemap, player, viewport, mouse) {
  return {
   seeBehindTileOpacity: 1,
   seeBehindTileOpacityMin: 0.1,
@@ -128,7 +128,7 @@ function initRenderer(tiles, tilemap, player, viewport) {
        drawPlayerMarker=true;
       }
      }
-     this.drawTile(d,x,y,leftAboveD,rightAboveD,tileData.pallete);
+     this.drawTile(d,x,y,leftAboveD,rightAboveD,editMode && gx===mouse.x && gy===mouse.y?"blue":tileData.pallete);
      //only draw objects above ground if player is above ground. always draw objects underground as they will be drawn over anyway
      if(d<0 || !player.isBelowGround){
       tileData.objects.forEach(objectKey=>{
