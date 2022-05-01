@@ -8,7 +8,7 @@ function initRenderer(tiles, tilemap, player, viewport) {
   seeBehindTileOpacityMin: 0.1,
   seeBehindTileOpacityMax: 1,
   drawImage: function(img,x,y){
-   tilemap.drawImage(img,x,y);
+   tilemap.drawImage(img,x-viewport.x+viewport.widthHalf,y-viewport.y+viewport.heightHalf);
   },
   drawTile: function(d,x,y,leftAboveD,rightAboveD,tileColour){
    var tileSet=tiles.tileSets[tileColour];

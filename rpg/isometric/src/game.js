@@ -48,15 +48,10 @@ var tileSets={
 };
 var canvas=document.getElementById("tilemap");
 var tilemap=canvas.getContext("2d");
-var viewport={
- x:0,
- y:0,
- width: canvas.width,
- height: canvas.height
-};
 var player=getPlayer();
 player.x=580;
 player.y=630;
+var viewport=initViewport(player,canvas);
 var keyboardListener=addKeyboardListener(player);
 //tile stuff
 fetch('http://localhost:9000/assets/tile_depth.json')
