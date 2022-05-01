@@ -50,7 +50,7 @@ var tileSets={
  "tree1":{
   image:tree1,
   xOffset:16,
-  yOffset:60
+  yOffset:54
  }
 };
 var canvas=document.getElementById("tilemap");

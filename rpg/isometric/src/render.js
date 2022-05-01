@@ -7,7 +7,7 @@ function initRenderer(tiles, tilemap, player, viewport, mouse) {
    tilemap.drawImage(img,x-viewport.x+viewport.widthHalf,y-viewport.y+viewport.heightHalf);
   },
   drawObject: function(imageObject,x,y){
-   this.drawImage(imageObject.image,x-imageObject.xOffset,y-imageObject.yOffset);
+   this.drawImage(imageObject.image,x+imageObject.xOffset,y-imageObject.yOffset);
   },
   drawTile: function(d,x,y,leftAboveD,rightAboveD,tileColour){
    var tileSet=tiles.tileSets[tileColour];
