@@ -6,8 +6,11 @@ function getPlayer() {
  
   xSpeed: 0,
   xSpeedPower: 4,//4 normal; 6 debug; //const
+  xSpeedPowerHalf: 2,//const
   ySpeed: 0,
-  ySpeedPower: 3,//2 normal; 4 debug; //const //slightly faster straight vertical movement feels more natural
+  ySpeedPower: 3,//3 normal; 4 debug; //const //slightly faster straight vertical movement feels more natural
+  ySpeedPowerHalf: 1,//const
+  ySpeedPowerDiagonal: 2,//const //half xSpeedPower //slightly slower so that diagnoal movement aligns with the grid
  
   height: 0,
   jumpSpeed: 0,
@@ -43,18 +46,50 @@ function getPlayer() {
    this.jumpSpeed=this.jumpPower;
   },
   update: function(tiles){
-   var pground=null;
+   var pground=null,
+    collisionCheck=null,
+    xSpeed=this.xSpeed,
+    ySpeed=this.xSpeed===0||this.ySpeed===0?this.ySpeed:this.ySpeed>0?this.ySpeedPowerDiagonal:-this.ySpeedPowerDiagonal;
    // collision detection: walls
-   if(this.xSpeed!=0){
-    var nextpx=this.x-this.xSpeed;
-    if(!tiles.checkCollision(nextpx,this.y,this.height)){
+   if(xSpeed!=0){
+    var nextpx=this.x-xSpeed;
+    collisionCheck=tiles.checkCollision(nextpx,this.y,this.height);
+    if(collisionCheck.collision){
+     //push along wall
+     if(this.ySpeed===0){
+      if(collisionCheck.push.indexOf("up")!==-1){
+       ySpeed=this.ySpeedPowerHalf;
+      }else if(collisionCheck.push.indexOf("down")!==-1){
+       ySpeed=-this.ySpeedPowerHalf;
+      }
+     }
+    }else{
      this.x=nextpx;
     }
    }
-   if(this.ySpeed!=0){
+   if(ySpeed!=0){
     //adjust speed so that moving in diagonal motion aligns with the grid
-    var nextpy=this.y-(this.xSpeed===0?this.ySpeed:this.ySpeed>0?2:-2);
-    if(!tiles.checkCollision(this.x,nextpy,this.height)){
+    var nextpy=this.y-ySpeed;
+    collisionCheck=tiles.checkCollision(this.x,nextpy,this.height);
+    if(collisionCheck.collision){
+     //push along wall
+     if(this.xSpeed===0){
+      if(collisionCheck.push.indexOf("left")!==-1){
+       xSpeed=this.xSpeedPowerHalf;
+      }else if(collisionCheck.push.indexOf("right")!==-1){
+       xSpeed=-this.xSpeedPowerHalf;
+      }else{
+       xSpeed=0;
+      }
+      if(xSpeed!=0){
+       var nextpx=this.x-xSpeed;
+       collisionCheck=tiles.checkCollision(nextpx,this.y,this.height);
+       if(!collisionCheck.collision){
+        this.x=nextpx;
+       }
+      }
+     }
+    }else{
      this.y=nextpy;
     }
    }

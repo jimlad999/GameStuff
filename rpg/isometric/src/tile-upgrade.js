@@ -3,7 +3,7 @@
  "version":int,
  "tileData":[{
   "depth":int,
-  "pallete":string,
+  "palette":string,
   "objects":[string],
   "collision":bool,//true=cannot walk over;false=can walk over
  }]
@@ -15,10 +15,10 @@ function upgradeTileData(data){
   default: throw new Error("Unsupported version of tile data: '" + data.version + "'");
  }
 };
-function tileData(depth,pallete,objects,collision){
+function tileData(depth,palette,objects,collision){
  return {
   depth,
-  pallete,
+  palette,
   objects:objects||[],
   collision:collision||false
  }
@@ -34,10 +34,15 @@ function upgradeFromV1(data){
   version:data.version,
   tileData:data.tileDepth.map((r,gy)=>r.map((d,gx)=>{
    // HACK: draw a tree
+   var palette="green";
    if (gx===9 && gy===14) {
     var objects=["tree1"];
+    palette="blue";
+   }else if (gx===9 && gy===23) {
+    var objects=["tree1"];
+    palette="blue";
    }
-   return tileData(d,"green",objects,!!objects);
+   return tileData(d,palette,objects,!!objects);
   }))
  };
 }

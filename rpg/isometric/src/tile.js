@@ -11,14 +11,14 @@ function initTileFunctions(tileSets, tileData){
    var nx=(ox%tileSets.tileWidth)/tileSets.tileWidth;
    var ny=(oy%tileSets.tileHeight)/tileSets.tileHeight;
    var w=nx+ny;
+   var v=nx-ny;
    if(w<0.5){--gx;--gy;}
    else if(w>1.5){++gy;}
    else{
-    var v=nx-ny;
     if(v<-0.5){--gx;++gy;}
     else if(v>0.5){--gy;}
    }
-   return {x:gx,y:gy};
+   return {x:gx,y:gy,nx,ny,w,v};
   },
   getTileData: function(tile){
    return this.tileData[tile.y][tile.x]
@@ -40,18 +40,44 @@ function initTileFunctions(tileSets, tileData){
    var tile=this.getTileIndex(x,y);
    return this.getGroundFromTile(tile);
   },
+  isMajorTile: function(x,y){
+   return (x*2+y)%2===0;
+  },
+  getPushDirections: function(tile){
+   var isTileMajorTile=this.isMajorTile(tile.x,tile.y);
+   return (
+    isTileMajorTile
+    ?tile.nx>0.5
+     ?tile.ny>0.5?["right","down"]:["right","up"]
+     :tile.ny>0.5?["left","down"]:["left","up"]
+    :tile.w>1.5?["left","up"]
+     :tile.w<0.5?["right","down"]
+      :tile.v>0.5?["left","down"]
+       :tile.v<-0.5?["right","up"]
+        :[]
+   );
+  },
   /** return true if collision detected */
   checkCollision: function(x,y,height){
    var tile=this.getTileIndex(x,y);
    var tileData=this.getTileData(tile);
    if(tileData.collision){
-    return true;
+    return {
+     collision:true,
+     push:this.getPushDirections(tile)
+    };
    }
    var ground=this.getGroundFromTileData(tileData);
-   return height<ground
-  },
-  isMajorTile: function(x,y){
-   return (x*2+y)%2===0;
+   if(height<ground){
+    return {
+     collision:true,
+     push:this.getPushDirections(tile)
+    };
+   }
+   return {
+    collision:false,
+    push:[]
+   };
   },
   getSurroundingTiles: function(centerX,centerY,radius){
    var yRadius=radius*2;
