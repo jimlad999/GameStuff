@@ -10,7 +10,7 @@ function getPlayer() {
   ySpeedPower: 3,//2 normal; 4 debug; //const //slightly faster straight vertical movement feels more natural
  
   height: 0,
-  jumpHeight: 0,
+  jumpSpeed: 0,
   jumpPower: 12, //const
   gravity: 2, //const
  
@@ -40,40 +40,40 @@ function getPlayer() {
    this.ySpeed=0;
   },
   jump: function(){
-   this.jumpHeight=this.jumpPower;
+   this.jumpSpeed=this.jumpPower;
   },
   update: function(tiles){
+   var pground=null;
    // collision detection: walls
    if(this.xSpeed!=0){
     var nextpx=this.x-this.xSpeed;
-    var pground=tiles.getGround(nextpx,this.y);
-    if(this.height<=pground){
+    pground=tiles.getGround(nextpx,this.y);
+    if(this.height>=pground){
      this.x=nextpx;
     }
    }
    if(this.ySpeed!=0){
     //adjust speed so that moving in diagonal motion aligns with the grid
     var nextpy=this.y-(this.xSpeed===0?this.ySpeed:this.ySpeed>0?2:-2);
-    var pground=tiles.getGround(this.x,nextpy);
-    if(this.height<=pground){
+    pground=tiles.getGround(this.x,nextpy);
+    if(this.height>=pground){
      this.y=nextpy;
     }
    }
    // collision detection: ground
-   var playerTile=tiles.getTileIndex(this.x,this.y);
-   var pground=tiles.getGroundFromTile(playerTile);
-   if(this.height<pground || this.jumpHeight!==0){
-    this.height-=this.jumpHeight;
-    this.jumpHeight-=this.gravity;
+   pground=tiles.getGround(this.x,this.y);
+   if(this.height>pground || this.jumpSpeed!==0){
+    this.height+=this.jumpSpeed;
+    this.jumpSpeed-=this.gravity;
    }
-   if(this.height>=pground){
-    this.jumpHeight=0;
+   if(this.height<=pground){
+    this.jumpSpeed=0;
     this.height=pground;
    }
    // detecting "underground"
-   if(this.height>10 ){
+   if(this.height<-10 ){
     this.isBelowGround=true;
-   }else if(this.height<=0 ){
+   }else if(this.height>=0 ){
     this.isBelowGround=false
    }
   }

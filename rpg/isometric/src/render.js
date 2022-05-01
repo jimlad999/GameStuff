@@ -75,7 +75,7 @@ function initRenderer(tiles, tilemap, player, viewport) {
    tilemap.clearRect(0,0,viewport.width,viewport.height);
    var playerTile=tiles.getTileIndex(player.x,player.y);
    var isTileWithinPlayerSight=tiles.getSurroundingTiles(playerTile.x,playerTile.y,3);
-   var pd=Math.round(player.height/-32);
+   var pd=Math.round(player.height/32);
    var drawPlayerMarker=false;
    for(var gy=0;gy<tiles.tileDepth.length;++gy){
     var r=tiles.tileDepth[gy];
@@ -133,12 +133,12 @@ function initRenderer(tiles, tilemap, player, viewport) {
     }
     if(playerTile.y===gy){
      tilemap.globalAlpha=1.0;
-     this.drawImage(player.image,player.x-player.xSizeOffset,player.y-player.ySizeOffset+player.height);
+     this.drawImage(player.image,player.x-player.xSizeOffset,player.y-player.ySizeOffset-player.height);
     }
    }
    if(drawPlayerMarker){
     tilemap.globalAlpha=1.0;
-    this.drawImage(player.marker,player.x-player.markerXSizeOffset,player.y-player.markerYSizeOffset-player.ySizeOffset+player.height-3);
+    this.drawImage(player.marker,player.x-player.markerXSizeOffset,player.y-player.markerYSizeOffset-player.ySizeOffset-player.height-3);
    }
   }
  };

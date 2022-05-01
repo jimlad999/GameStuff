@@ -28,7 +28,7 @@ function initTileFunctions(tileSets, tileDepth){
    }
   },
   getGroundFromTile: function(tile){
-   return this.getGroundDepthFromTile(tile)*-32;
+   return this.getGroundDepthFromTile(tile)*32;
   },
   getGround: function(x,y){
    var tile=this.getTileIndex(x,y);
