@@ -97,12 +97,16 @@ function initRenderer(tiles, tilemap, player, viewport) {
        tilemap.globalAlpha=this.seeBehindTileOpacity;
        d=0;
       }
-     }else if(d>=0 && d>pd && !player.isBelowGround &&
-      d-pd>2 && gy>playerTile.y && tileIsWithinPlayerSight && Math.abs(gx-playerTile.x)<=1
-      ){
-      drawPlayerMarker=true;
      }else{
       tilemap.globalAlpha=this.seeBehindTileOpacity;
+      if(player.isBelowGround){
+       d=0;
+      }
+      if(d>=0 && d>pd && !player.isBelowGround &&
+       d-pd>2 && gy>playerTile.y && tileIsWithinPlayerSight && Math.abs(gx-playerTile.x)<=1
+       ){
+       drawPlayerMarker=true;
+      }
      }
      this.drawTile(d,x,y,leftAboveD,rightAboveD,"green");//tileIsWithinPlayerSight?"blue":"green");
      // HACK: draw a tree
