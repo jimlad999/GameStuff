@@ -9,6 +9,7 @@
  }]
 }
  */
+var currentTileDataVersion=2;
 function upgradeTileData(data){
  switch(data.version){
   case 1:return upgradeFromV1(data);
@@ -31,7 +32,7 @@ function tileData(depth,palette,objects,collision){
  */
 function upgradeFromV1(data){
  return {
-  version:data.version,
+  version:currentTileDataVersion,
   tileData:data.tileDepth.map((r,gy)=>r.map((d,gx)=>{
    // HACK: draw a tree
    var palette="green";
