@@ -28,6 +28,7 @@ function initTileset(assetsFolder){
     "Plus1":plus1,
     "Shade":shade
    };
+   this.palettes.push(palette);
   },
   setObject: function(key,xOffset,yOffset,imageSrc){
    //imageSrc is optional. fall back to image with same name as key
@@ -39,7 +40,10 @@ function initTileset(assetsFolder){
     xOffset,
     yOffset
    };
-  }
+   this.objects.push(key);
+  },
+  palettes:[],
+  objects:[]
  };
  return tileset;
 }

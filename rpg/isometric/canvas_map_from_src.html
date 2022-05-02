@@ -3,15 +3,43 @@
 <head>
 <style>
 body,html {
- background: black;
+ background: white;
  margin:0;
  padding:0;
  font-size:0;
+}
+canvas {
+ background:black;
+}
+h1 {
+ font-size:12px;
+ margin-bottom:0;
+}
+.editor-panel {
+ border:1px solid black;
+}
+palette,tileobject {
+ display:inline-block;
+ border:1px solid black;
+}
+palette.selected,tileobject.selected {
+ border:1px solid yellow;
 }
 </style>
 </head>
 <body>
 <canvas id="tilemap" height="900" width="1600"></canvas>
+<h1>controls</h1>
+<div class="editor-panel">
+ <button type="button" id="save-map-data">Save map data</button>
+ <button type="button" id="load-map-data">Load map data</button>
+ <button type="button" id="add-palette">Add palette</button>
+ <button type="button" id="add-object">Add object</button>
+</div>
+<h1>palettes</h1>
+<div id="editor-palettes" class="editor-panel"></div>
+<h1>objects</h1>
+<div id="editor-objects" class="editor-panel"></div>
 <script type="text/javascript" src="./src/tileset.js"></script>
 <script type="text/javascript" src="./src/player.js"></script>
 <script type="text/javascript" src="./src/keyboard.js"></script>
@@ -20,6 +48,7 @@ body,html {
 <script type="text/javascript" src="./src/tile-upgrade.js"></script>
 <script type="text/javascript" src="./src/viewport.js"></script>
 <script type="text/javascript" src="./src/render.js"></script>
+<script type="text/javascript" src="./src/editor.js"></script>
 <script type="text/javascript" src="./src/gameloop.js"></script>
 <script type="text/javascript" src="./src/game.js"></script>
 </body>

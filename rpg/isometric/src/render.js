@@ -1,4 +1,4 @@
-function initRenderer(environment, tilemap, player, viewport, mouse) {
+function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
  return {
   seeBehindTileOpacity: 1,
   seeBehindTileOpacityMin: 0.1,
@@ -128,7 +128,11 @@ function initRenderer(environment, tilemap, player, viewport, mouse) {
        drawPlayerMarker=true;
       }
      }
-     this.drawTile(d,x,y,leftAboveD,rightAboveD,editMode && gx===mouse.x && gy===mouse.y?"blue":tileData.palette);
+     var editorActiveAndTileSelected=editor.active && gx===mouse.x && gy===mouse.y;
+     var tilePalette=editorActiveAndTileSelected && editor.currentSelectedMode==="palette"?
+       editor.currentSelectedKey:
+       tileData.palette;
+     this.drawTile(d,x,y,leftAboveD,rightAboveD,tilePalette);
      //only draw objects above ground if player is above ground. always draw objects underground as they will be drawn over anyway
      if(d<0 || !player.isBelowGround){
       tileData.objects.forEach(objectKey=>{
@@ -137,6 +141,11 @@ function initRenderer(environment, tilemap, player, viewport, mouse) {
        //TODO: work out how to draw floating objects?
        this.drawObject(imageObject,x,y+d*environment.tileset.wallHeight);
       });
+      if(editorActiveAndTileSelected && editor.currentSelectedMode==="object"){
+       var imageObject=environment.tileset[editor.currentSelectedKey];
+       tilemap.globalAlpha=0.5;
+       this.drawObject(imageObject,x,y+d*environment.tileset.wallHeight);
+      }
      }
     }
     if(playerTile.y===gy){
