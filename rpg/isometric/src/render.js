@@ -9,49 +9,49 @@ function initRenderer(environment, tilemap, player, viewport, mouse) {
   drawObject: function(imageObject,x,y){
    this.drawImage(imageObject.image,x+imageObject.xOffset,y-imageObject.yOffset);
   },
-  drawTile: function(d,x,y,leftAboveD,rightAboveD,tileColour){
-   var tileSet=environment.tileSets[tileColour];
+  drawTile: function(d,x,y,leftAboveD,rightAboveD,palette){
+   var tileset=environment.tileset[palette];
    if(d<0){
     var currentDepth=0;
     for(;currentDepth>d;--currentDepth){
      if(leftAboveD>=currentDepth && rightAboveD>=currentDepth){
-      this.drawImage(tileSet["Sub1"],x,y);
+      this.drawImage(tileset["Sub1"],x,y);
      }else if(leftAboveD>=currentDepth){
-      this.drawImage(tileSet["Sub1Left"],x,y);
+      this.drawImage(tileset["Sub1Left"],x,y);
      }else if(rightAboveD>=currentDepth){
-      this.drawImage(tileSet["Sub1Right"],x,y);
+      this.drawImage(tileset["Sub1Right"],x,y);
      }
-     y+=environment.tileSets.wallHeight;
+     y+=environment.tileset.wallHeight;
     }
-    this.drawImage(tileSet["0"],x,y);
+    this.drawImage(tileset["0"],x,y);
     for(var shadeLevel=0;shadeLevel>d;--shadeLevel){
-     this.drawImage(tileSet["shade"],x,y);
+     this.drawImage(tileset["Shade"],x,y);
     }
     if((leftAboveD<0 && d>leftAboveD) || (rightAboveD<0 && d>rightAboveD)){
      var minDepthEitherSide=rightAboveD==null || leftAboveD<rightAboveD ? leftAboveD : rightAboveD;
-     y+=environment.tileSets.wallHeightHalf;
+     y+=environment.tileset.wallHeightHalf;
      for(;currentDepth>minDepthEitherSide;--currentDepth){
       if(leftAboveD>=currentDepth && rightAboveD>=currentDepth){
-       this.drawImage(tileSet["Sub1"],x,y);
+       this.drawImage(tileset["Sub1"],x,y);
       }else if(leftAboveD>=currentDepth){
-       this.drawImage(tileSet["Sub1Left"],x+environment.tileSets.tileWidthHalf,y);
+       this.drawImage(tileset["Sub1Left"],x+environment.tileset.tileWidthHalf,y);
       }else if(rightAboveD>=currentDepth){
-       this.drawImage(tileSet["Sub1Right"],x-environment.tileSets.tileWidthHalf,y);
+       this.drawImage(tileset["Sub1Right"],x-environment.tileset.tileWidthHalf,y);
       }
-      y+=environment.tileSets.wallHeight;
+      y+=environment.tileset.wallHeight;
      }
     }
    }else if(d>0){
     for(var a=0;a<d;++a){
-     y-=environment.tileSets.wallHeight;
-     this.drawImage(tileSet["Plus1"],x,y+environment.tileSets.wallHeightHalf);
+     y-=environment.tileset.wallHeight;
+     this.drawImage(tileset["Plus1"],x,y+environment.tileset.wallHeightHalf);
     }
-    this.drawImage(tileSet["0"],x,y);
+    this.drawImage(tileset["0"],x,y);
     for(var shadeLevel=0;shadeLevel<d;++shadeLevel){
-     this.drawImage(tileSet["shade"],x,y);
+     this.drawImage(tileset["Shade"],x,y);
     }
    }else{
-    this.drawImage(tileSet["0"],x,y);
+    this.drawImage(tileset["0"],x,y);
    }
   },
   updateTerrainOpacity: function(){
@@ -83,11 +83,11 @@ function initRenderer(environment, tilemap, player, viewport, mouse) {
      rAbove=environment.tileData[gy-1];
     }
     var isEvenRow=gy%2===0;
-    var y=(gy-1)*environment.tileSets.tileHeightHalf;
+    var y=(gy-1)*environment.tileset.tileHeightHalf;
     for(var gx=0;gx<r.length;++gx){
      var tileData=r[gx];
      var d=tileData.depth;
-     var x=isEvenRow ? gx*environment.tileSets.tileWidth-environment.tileSets.tileWidthHalf : gx*environment.tileSets.tileWidth;
+     var x=isEvenRow ? gx*environment.tileset.tileWidth-environment.tileset.tileWidthHalf : gx*environment.tileset.tileWidth;
      var tileIsWithinPlayerSight=isTileWithinPlayerSight(gx,gy);
      var gx1=null,leftAboveD=null,rightAboveD=null;
      if(d<0 && gy>1){
@@ -132,10 +132,10 @@ function initRenderer(environment, tilemap, player, viewport, mouse) {
      //only draw objects above ground if player is above ground. always draw objects underground as they will be drawn over anyway
      if(d<0 || !player.isBelowGround){
       tileData.objects.forEach(objectKey=>{
-       var imageObject=environment.tileSets[objectKey];
+       var imageObject=environment.tileset[objectKey];
        //d*wallHeight to draw objects on the ground
        //TODO: work out how to draw floating objects?
-       this.drawObject(imageObject,x,y+d*environment.tileSets.wallHeight);
+       this.drawObject(imageObject,x,y+d*environment.tileset.wallHeight);
       });
      }
     }

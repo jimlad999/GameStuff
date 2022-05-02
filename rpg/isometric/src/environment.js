@@ -1,15 +1,15 @@
-function initEnvironment(tileSets, tileData){
+function initEnvironment(tileset, tileData){
  return {
-  tileSets,
+  tileset,
   tileData:tileData.tileData,
   getTileIndex: function(x,y){
    //offset x,y so 0,0 is center of top-left corner tile
-   var ox=x+tileSets.tileWidthHalf;
-   var oy=y+tileSets.tileHeightHalf;
-   var gx=Math.floor(ox/tileSets.tileWidth);
-   var gy=Math.floor(oy/tileSets.tileHeight)*2;
-   var nx=(ox%tileSets.tileWidth)/tileSets.tileWidth;
-   var ny=(oy%tileSets.tileHeight)/tileSets.tileHeight;
+   var ox=x+tileset.tileWidthHalf;
+   var oy=y+tileset.tileHeightHalf;
+   var gx=Math.floor(ox/tileset.tileWidth);
+   var gy=Math.floor(oy/tileset.tileHeight)*2;
+   var nx=(ox%tileset.tileWidth)/tileset.tileWidth;
+   var ny=(oy%tileset.tileHeight)/tileset.tileHeight;
    var w=nx+ny;
    var v=nx-ny;
    if(w<0.5){--gx;--gy;}
@@ -31,10 +31,10 @@ function initEnvironment(tileSets, tileData){
    }
   },
   getGroundFromTileData: function(tileData){
-   return !tileData?0:tileData.depth*tileSets.wallHeight;
+   return !tileData?0:tileData.depth*tileset.wallHeight;
   },
   getGroundFromTile: function(tile){
-   return this.getGroundDepthFromTile(tile)*tileSets.wallHeight;
+   return this.getGroundDepthFromTile(tile)*tileset.wallHeight;
   },
   getGround: function(x,y){
    var tile=this.getTileIndex(x,y);
