@@ -7,6 +7,7 @@ body,html {
  margin:0;
  padding:0;
  font-size:0;
+ font-family: Arial;
 }
 canvas {
  background:black;
@@ -15,15 +16,32 @@ h1 {
  font-size:12px;
  margin-bottom:0;
 }
+label {
+ font-size:13px;
+}
 .editor-panel {
  border:1px solid black;
+}
+.editor-file-upload {
+ border: 1px solid grey;
+ border-radius: 2px;
+ background: #eee;
+ display: inline-block;
+ padding: 2px 12px;
+ cursor: pointer;
+}
+.editor-file-upload input[type="file"] {
+ display: none;
+}
+.editor-brush-size input {
+  width: 30px;
 }
 palette,tileobject {
  display:inline-block;
  border:1px solid black;
 }
 palette.selected,tileobject.selected {
- border:1px solid yellow;
+ border-color:yellow;
 }
 </style>
 </head>
@@ -31,15 +49,19 @@ palette.selected,tileobject.selected {
 <canvas id="tilemap" height="720" width="1280"></canvas>
 <h1>controls</h1>
 <div class="editor-panel">
- <button type="button" id="save-map-data">Save map data</button>
- <button type="button" id="load-map-data">Load map data</button>
- <button type="button" id="add-palette">Add palette</button>
- <button type="button" id="add-object">Add object</button>
+ <label class="editor-file-upload"><input type="file" id="save-map-data" accept="application/json" />Save map data</label>
+ <label class="editor-file-upload"><input type="file" id="load-map-data" accept="application/json" />Load map data</label>
+ <label class="editor-file-upload"><input type="file" id="add-palette" accept="image/png" />Add palette</label>
+ <label class="editor-file-upload"><input type="file" id="add-object" accept="image/png" />Add object</label>
+ <label class="editor-file-upload"><input type="file" id="add-npc" accept="image/png" />Add npc</label>
+ <label class="editor-brush-size">Brush size <input type="number" id="brush-size" value="1" min="1" /></label>
 </div>
 <h1>palettes</h1>
 <div id="editor-palettes" class="editor-panel"></div>
 <h1>objects</h1>
 <div id="editor-objects" class="editor-panel"></div>
+<h1>npcs</h1>
+<div id="editor-npcs" class="editor-panel"></div>
 <script type="text/javascript" src="./src/tileset.js"></script>
 <script type="text/javascript" src="./src/player.js"></script>
 <script type="text/javascript" src="./src/keyboard.js"></script>

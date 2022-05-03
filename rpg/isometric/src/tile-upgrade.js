@@ -24,6 +24,24 @@ function tileData(depth,palette,objects,collision){
   collision:collision||false
  };
 };
+
+//editor helper functions. declared here to be with other "tileData" functions + the schema.
+//editor dependency on same method signature. If this is a problem swap to higher order functions.
+function updateTileDataDepth(tileData,depth){
+ tileData.depth=depth;
+};
+function updateTileDataPalette(tileData,palette){
+ tileData.palette=palette;
+};
+function updateTileDataObject(tileData,objectKey){
+ if(tileData.objects.indexOf(objectKey)===-1){
+  tileData.objects.push(objectKey);
+ }
+};
+function updateTileDataCollision(tileData,collision){
+ tileData.collision=collision;
+};
+
 /**source schema
 {
  "version":int,
@@ -34,16 +52,8 @@ function upgradeFromV1(data){
  return {
   version:currentTileDataVersion,
   tileData:data.tileDepth.map((r,gy)=>r.map((d,gx)=>{
-   // HACK: draw a tree
    var palette="green";
-   if (gx===9 && gy===14) {
-    var objects=["tree1"];
-    palette="blue";
-   }else if (gx===9 && gy===23) {
-    var objects=["tree1"];
-    palette="blue";
-   }
-   return tileData(d,palette,objects,!!objects);
+   return tileData(d,palette);
   }))
  };
 };

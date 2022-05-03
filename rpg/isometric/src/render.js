@@ -74,6 +74,7 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
    tilemap.clearRect(0,0,viewport.width,viewport.height);
    var playerTile=environment.getTileIndex(player.x,player.y);
    var isTileWithinPlayerSight=environment.getSurroundingTiles(playerTile.x,playerTile.y,3);
+   var isTileWithinEditorBrush=editor.getTileWithinBrushFunc();
    var pd=Math.round(player.height/32);
    var drawPlayerMarker=false;
    for(var gy=0;gy<environment.tileData.length;++gy){
@@ -128,7 +129,7 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
        drawPlayerMarker=true;
       }
      }
-     var editorActiveAndTileSelected=editor.active && gx===mouse.x && gy===mouse.y;
+     var editorActiveAndTileSelected=editor.active && editor.currentSelectedMode && isTileWithinEditorBrush(gx,gy);
      var tilePalette=editorActiveAndTileSelected && editor.currentSelectedMode==="palette"?
        editor.currentSelectedKey:
        tileData.palette;

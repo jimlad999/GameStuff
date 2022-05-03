@@ -17,8 +17,11 @@ fetch('http://localhost:9000/assets/maps/tile_depth.json')
    var environment=initEnvironment(tileset, upgradeTileData(data));
    viewport.limitToBoundsOfEnvironment(environment);
    var mouse=addMouseListener(environment, viewport);
-   editor=initEditor(mouse,environment);
+   editor=initEditor(mouse,environment,canvas);
    var renderer=initRenderer(environment, tilemap, player, viewport, mouse, editor);
    var game=initGame(environment, renderer, player);
-   setInterval(game.advanceGameTime, 20);
+   setInterval(function(){
+    game.advanceGameTime();
+    editor.update();
+   }, 20);
   });
