@@ -4,11 +4,15 @@ function addKeyboardListener(player) {
   onKeydown: function(e){
    if(this.pause) return;
    switch (e.which) {
-    case 32: player.jump(); break;
+    //space sometimes not registered as pressed when multiple arrow keys pressed.
+    //while testing, space not registered while pressing down and left keys.
+    //TODO: workaround to map to different keys.
+    case 32/*space*/: player.jump(); break;
+    // arrow keys
     case 37: player.moveLeft(); break;
-    case 38: player.moveUp(); break; //key-up
+    case 38: player.moveUp(); break;
     case 39: player.moveRight(); break;
-    case 40: player.moveDown(); break; //key-down
+    case 40: player.moveDown(); break;
     default: return; // exit this handler for other keys
    }
    e.preventDefault();
@@ -17,9 +21,9 @@ function addKeyboardListener(player) {
    if(this.pause) return;
    switch (e.which) {
     case 37: player.stopMoveHorizontal(); break;
-    case 38: player.stopMoveVertical(); break; //key-up
+    case 38: player.stopMoveVertical(); break;
     case 39: player.stopMoveHorizontal(); break;
-    case 40: player.stopMoveVertical(); break; //key-down
+    case 40: player.stopMoveVertical(); break;
     default: return; // exit this handler for other keys
    }
    e.preventDefault();

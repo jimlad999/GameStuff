@@ -111,7 +111,7 @@ function getPlayer() {
    }
   }
  };
- player.image.src="./assets/player.png";
- player.marker.src="./assets/player-marker.png";
+ player.image.src="./assets/characters/player.png";
+ player.marker.src="./assets/misc/player-marker.png";
  return player;
 };

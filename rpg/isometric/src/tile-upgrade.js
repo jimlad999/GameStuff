@@ -22,8 +22,8 @@ function tileData(depth,palette,objects,collision){
   palette,
   objects:objects||[],
   collision:collision||false
- }
-}
+ };
+};
 /**source schema
 {
  "version":int,
@@ -46,4 +46,4 @@ function upgradeFromV1(data){
    return tileData(d,palette,objects,!!objects);
   }))
  };
-}
+};

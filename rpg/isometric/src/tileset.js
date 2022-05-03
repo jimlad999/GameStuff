@@ -1,5 +1,15 @@
-function initTileset(assetsFolder){
- assetsFolder=assetsFolder||"./assets";
+/**
+options:{
+ assetsFolder:string,
+ tilesFolder:string,
+ objectsFolder:string
+}
+ */
+function initTileset(options){
+ options=options||{};
+ var assetsFolder=options.assetsFolder||"./assets";
+ var tilesFolder=options.tilesFolder===null || options.tilesFolder===undefined ? "/tiles" : options.tilesFolder;
+ var objectsFolder=options.objectsFolder===null || options.objectsFolder===undefined ? "/objects" : options.objectsFolder;
  var tileset={
   tileWidth: 64, //const
   tileWidthHalf: 32, //tileW/2; //const
@@ -9,17 +19,17 @@ function initTileset(assetsFolder){
   wallHeightHalf: 16, //half wallHeight
   setPalette: function(palette){
    var ground=new Image();
-   ground.src=`${assetsFolder}/${palette}.png`;
+   ground.src=`${assetsFolder}${tilesFolder}/${palette}.png`;
    var sub1=new Image();
-   sub1.src=`${assetsFolder}/${palette}-1.png`;
+   sub1.src=`${assetsFolder}${tilesFolder}/${palette}-1.png`;
    var sub1Left=new Image();
-   sub1Left.src=`${assetsFolder}/${palette}-1left.png`;
+   sub1Left.src=`${assetsFolder}${tilesFolder}/${palette}-1left.png`;
    var sub1Right=new Image();
-   sub1Right.src=`${assetsFolder}/${palette}-1right.png`;
+   sub1Right.src=`${assetsFolder}${tilesFolder}/${palette}-1right.png`;
    var plus1=new Image();
-   plus1.src=`${assetsFolder}/${palette}+1.png`;
+   plus1.src=`${assetsFolder}${tilesFolder}/${palette}+1.png`;
    var shade=new Image();
-   shade.src=`${assetsFolder}/${palette}-shade.png`;
+   shade.src=`${assetsFolder}${tilesFolder}/${palette}-shade.png`;
    this[palette]={
     "0":ground,
     "Sub1":sub1,
@@ -34,7 +44,7 @@ function initTileset(assetsFolder){
    //imageSrc is optional. fall back to image with same name as key
    imageSrc=imageSrc||`${key}.png`;
    var image=new Image();
-   image.src=`${assetsFolder}/${imageSrc}`;
+   image.src=`${assetsFolder}${objectsFolder}/${imageSrc}`;
    this[key]={
     image,
     xOffset,

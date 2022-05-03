@@ -11,7 +11,7 @@ var viewport=initViewport(player,canvas);
 var keyboardListener=addKeyboardListener(player);
 //global editor to enable changing active state through browser console
 var editor=null;
-fetch('http://localhost:9000/assets/tile_depth.json')
+fetch('http://localhost:9000/assets/maps/tile_depth.json')
   .then(response => response.json())
   .then(data => {
    var environment=initEnvironment(tileset, upgradeTileData(data));
