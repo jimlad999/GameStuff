@@ -139,12 +139,12 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
        var imageObject=environment.tileset[objectKey];
        //d*wallHeight to draw objects on the ground
        //TODO: work out how to draw floating objects?
-       this.drawObject(imageObject,x,y+d*environment.tileset.wallHeight);
+       this.drawObject(imageObject,x,y-d*environment.tileset.wallHeight);
       });
       if(editorActiveAndTileSelected && editor.currentSelectedMode==="object"){
        var imageObject=environment.tileset[editor.currentSelectedKey];
        tilemap.globalAlpha=0.5;
-       this.drawObject(imageObject,x,y+d*environment.tileset.wallHeight);
+       this.drawObject(imageObject,x,y-d*environment.tileset.wallHeight);
       }
      }
     }
