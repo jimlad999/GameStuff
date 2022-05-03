@@ -15,6 +15,7 @@ fetch('http://localhost:9000/assets/maps/tile_depth.json')
   .then(response => response.json())
   .then(data => {
    var environment=initEnvironment(tileset, upgradeTileData(data));
+   viewport.limitToBoundsOfEnvironment(environment);
    var mouse=addMouseListener(environment, viewport);
    editor=initEditor(mouse,environment);
    var renderer=initRenderer(environment, tilemap, player, viewport, mouse, editor);
