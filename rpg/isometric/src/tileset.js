@@ -17,6 +17,8 @@ function initTileset(options){
   tileHeightHalf: 16, //tileH/2; //const
   wallHeight: 32,
   wallHeightHalf: 16, //half wallHeight
+  palettes:[],
+  objects:[],
   setPalette: function(palette){
    var ground=new Image();
    ground.src=`${assetsFolder}${tilesFolder}/${palette}.png`;
@@ -40,20 +42,23 @@ function initTileset(options){
    };
    this.palettes.push(palette);
   },
-  setObject: function(key,xOffset,yOffset,imageSrc){
-   //imageSrc is optional. fall back to image with same name as key
-   imageSrc=imageSrc||`${key}.png`;
+  setObject: function(obj){
    var image=new Image();
-   image.src=`${assetsFolder}${objectsFolder}/${imageSrc}`;
-   this[key]={
+   image.src=`${assetsFolder}${objectsFolder}/${obj.imageSrc}`;
+   this[obj.key]={
     image,
-    xOffset,
-    yOffset
+    obj,
+    get xOffset(){return this.obj.xOffset;},
+    get yOffset(){return this.obj.yOffset;}
    };
-   this.objects.push(key);
+   this.objects.push(obj.key);
   },
-  palettes:[],
-  objects:[]
+  clearPalettesAndObjects: function(){
+   this.palettes.forEach(p => delete this[p]);
+   this.palettes.length=0;
+   this.objects.forEach(o => delete this[o]);
+   this.objects.length=0;
+  }
  };
  return tileset;
 }

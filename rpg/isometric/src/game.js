@@ -1,7 +1,4 @@
 var tileset=initTileset();
-tileset.setPalette("green");
-tileset.setPalette("blue");
-tileset.setObject("tree1",16,48,"tree-1.png");
 var canvas=document.getElementById("tilemap");
 var tilemap=canvas.getContext("2d");
 var player=getPlayer();
@@ -10,19 +7,13 @@ player.y=630;
 var environment=initEnvironment(tileset);
 var viewport=initViewport(player,canvas);
 var keyboardListener=addKeyboardListener(player);
+viewport.limitToBoundsOfEnvironment(environment);
+var mouse=addMouseListener(environment, viewport);
 //global editor to enable changing active state through browser console
-var editor=null;
-fetch('http://localhost:9000/assets/maps/tile_depth.json')
-  .then(response => response.json())
-  .then(data => {
-   environment.update(ensureMapDataUpToDate(data));
-   viewport.limitToBoundsOfEnvironment(environment);
-   var mouse=addMouseListener(environment, viewport);
-   editor=initEditor(mouse,environment,canvas);
-   var renderer=initRenderer(environment, tilemap, player, viewport, mouse, editor);
-   var game=initGame(environment, renderer, player);
-   setInterval(function(){
-    game.advanceGameTime();
-    editor.update();
-   }, 20);
-  });
+var editor=initEditor(mouse,environment,canvas);
+var renderer=initRenderer(environment, tilemap, player, viewport, mouse, editor);
+var game=initGame(environment, renderer, player);
+setInterval(function(){
+ game.advanceGameTime();
+ editor.update();
+},20);

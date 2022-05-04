@@ -65,8 +65,8 @@ function initEditor(mouse,environment,canvas){
    if(this.action==="paint" && this.currentSelectedMode){
     var tilesToUpdate=[];
     if(this.brushSize<2){
-     if(mouse.y<environment.tileData.length){
-     var r=environment.tileData[mouse.y];
+     if(mouse.y<environment.numTilesY){
+     var r=environment.getTileDataRow(mouse.y);
       if(mouse.x<r.length){
        tilesToUpdate.push(r[mouse.x]);
       }
@@ -78,11 +78,11 @@ function initEditor(mouse,environment,canvas){
       mouseYstart=mouse.y-brushSize2,
       mouseXend=mouse.x+brushSize2,
       mouseYend=mouse.y+brushSize2,
-      maxYlen=environment.tileData.length-1,//-1 because we use <= in for loop
+      maxYlen=environment.numTilesY-1,//-1 because we use <= in for loop
       gy=mouseYstart>0?mouseYstart:0,
       gyEnd=mouseYend<maxYlen?mouseYend:maxYlen;
      for(;gy<=gyEnd;++gy){
-      var r=environment.tileData[gy],
+      var r=environment.getTileDataRow(gy),
        maxXlen=r.length-1,//-1 because we use <= in for loop
        gx=mouseXstart>0?mouseXstart:0,
        gxEnd=mouseXend<maxXlen?mouseXend:maxXlen;
@@ -147,7 +147,7 @@ function initEditor(mouse,environment,canvas){
   a.download = `${filename}.json`;
   document.body.appendChild(a);
   a.click();
-  setTimeout(function() {
+  setTimeout(function(){
    document.body.removeChild(a);
    window.URL.revokeObjectURL(url);
   },0);
@@ -157,13 +157,19 @@ function initEditor(mouse,environment,canvas){
   mapDataFilename.value=filename;
   var reader=new FileReader()
   reader.onload=function(e) {
+   environment.tileset.palettes.forEach(p=>document.getElementById(`palette-${p}`).remove());
+   environment.tileset.objects.forEach(o=>document.getElementById(`mapobject-${o}`).remove());
    environment.update(ensureMapDataUpToDate(JSON.parse(e.target.result)));
+   setTimeout(function(){
+    environment.tileset.palettes.forEach(p => editor.addPaletteToEditor(p));
+    environment.tileset.objects.forEach(o => editor.addObjectToEditor(o));
+   },10);
   };
   reader.readAsText(e.target.files[0])
  };
  addPalette.onchange=function(){
   var palette=this.value.replace(/.*[\/\\]/, '').replace(".png","");
-  environment.tileset.setPalette(palette);
+  environment.setPalette(palette);
   environment.tileset[palette]["0"].addEventListener('load', function(){
    editor.addPaletteToEditor(palette);
   });

@@ -3,9 +3,29 @@ function initEnvironment(tileset){
   tileset,
   mapData:{},
   tileData:[],
+  numTilesX:0,
+  numTilesY:0,
   update: function(mapData){
    this.mapData=mapData;
    this.tileData=mapData.tileData;
+   //assume perfect rectangular/square maps
+   this.numTilesX=this.tileData[0].length;
+   this.numTilesY=this.tileData.length;
+   this.tileset.clearPalettesAndObjects();
+   this.mapData.palettes.forEach(p => this.tileset.setPalette(p));
+   this.mapData.objects.forEach(o => this.tileset.setObject(o));
+  },
+  setPalette: function(palette){
+   if(this.mapData.palettes.indexOf(palette)===-1){
+    this.tileset.setPalette(palette);
+    this.mapData.palettes.push(palette);
+   }
+  },
+  setObject: function(obj){
+   if(!this.mapData.objects.some(o=>o.key===obj.key)){
+    this.tileset.setObject(obj)
+    this.mapData.objects.push(obj);
+   }
   },
   getTileIndex: function(x,y){
    //offset x,y so 0,0 is center of top-left corner tile
@@ -28,8 +48,11 @@ function initEnvironment(tileset){
   getTileData: function(tile){
    return this.tileData[tile.y][tile.x]
   },
+  getTileDataRow: function(y){
+   return this.tileData[y];
+  },
   getGroundDepthFromTile: function(tile){
-   if(tile.x<0 || tile.y<0 || tile.y>=this.tileData.length || tile.x>=this.tileData[0].length){
+   if(tile.x<0 || tile.y<0 || tile.y>=this.numTilesY || tile.x>=this.numTilesX){
     return 0;
    }else{
     return this.getTileData(tile).depth;

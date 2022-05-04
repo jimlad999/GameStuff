@@ -32,13 +32,11 @@ function initViewport(position/*any {x,y}*/,canvas){
    }
   },
   limitToBoundsOfEnvironment: function(environment){
-   var numTilesX=environment.tileData[0].length,
-    numTilesY=environment.tileData.length;
    this.limitTo({
     minX:this.widthHalf,
-    maxX:environment.tileset.tileWidth * numTilesX - this.widthHalf - environment.tileset.tileWidthHalf,
+    maxX:environment.tileset.tileWidth * environment.numTilesX - this.widthHalf - environment.tileset.tileWidthHalf,
     minY:this.heightHalf,
-    maxY:environment.tileset.tileHeightHalf * (numTilesY-1) - this.heightHalf
+    maxY:environment.tileset.tileHeightHalf * (environment.numTilesY-1) - this.heightHalf
    });
   }
  };

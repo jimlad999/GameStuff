@@ -77,11 +77,11 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
    var isTileWithinEditorBrush=editor.getTileWithinBrushFunc();
    var pd=Math.round(player.height/32);
    var drawPlayerMarker=false;
-   for(var gy=0;gy<environment.tileData.length;++gy){
-    var r=environment.tileData[gy];
+   for(var gy=0;gy<environment.numTilesY;++gy){
+    var r=environment.getTileDataRow(gy);
     var rAbove;
     if(gy>1){
-     rAbove=environment.tileData[gy-1];
+     rAbove=environment.getTileDataRow(gy-1);
     }
     var isEvenRow=gy%2===0;
     var y=(gy-1)*environment.tileset.tileHeightHalf;
@@ -109,7 +109,7 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
      if(d<0 && player.isBelowGround){
       var clearPathToCurrentSection=tileIsWithinPlayerSight &&
        environment.getPath(gx,gy,playerTile.x,playerTile.y).every(a => {
-        var pathDepth=environment.tileData[a.y][a.x].depth;
+        var pathDepth=environment.getTileData(a).depth;
         return pathDepth<0 && (pathDepth-pd)<=2
       });
       if(clearPathToCurrentSection){

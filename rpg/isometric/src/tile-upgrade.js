@@ -1,6 +1,13 @@
 /**target schema
 {
  "version":int,
+ "palettes":[string],
+ "objects":[{
+  "key":string,
+  "xOffset":int,
+  "yOffset":int,
+  "imageSrc":string
+ }],
  "tileData":[][{
   "depth":int,
   "palette":string,
@@ -9,7 +16,7 @@
  }]
 }
  */
-var currentTileDataVersion=2;
+var currentTileDataVersion=3;
 function ensureMapDataUpToDate(mapData){
  if(!mapData){
   throw new Error("Invalid map data. Map data cannot be null");
@@ -29,6 +36,7 @@ function ensureMapDataUpToDate(mapData){
  }
  switch(mapData.version){
   case 1:return upgradeFromV1(mapData);
+  case 2:return upgradeFromV2(mapData);
   default: throw new Error("Unsupported version of tile data: '" + mapData.version + "'");
  }
 };
@@ -65,11 +73,23 @@ function updateTileDataCollision(tileData,collision){
 }
  */
 function upgradeFromV1(data){
+ var defaultPalette="green";
  return {
   version:currentTileDataVersion,
+  palettes:[defaultPalette],
+  objects:[],
   tileData:data.tileDepth.map((r,gy)=>r.map((d,gx)=>{
-   var palette="green";
-   return tileData(d,palette);
+   return tileData(d,defaultPalette);
   }))
+ };
+};
+function upgradeFromV2(data){
+ var p={};
+ data.tileData.forEach(r=>r.forEach(d=>p[d.palette]=true));
+ return {
+  version:currentTileDataVersion,
+  palettes:Object.keys(p),
+  objects:[],
+  tileData:data.tileData
  };
 };
