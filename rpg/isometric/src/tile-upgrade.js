@@ -1,7 +1,7 @@
 /**target schema
 {
  "version":int,
- "tileData":[{
+ "tileData":[][{
   "depth":int,
   "palette":string,
   "objects":[string],
@@ -10,10 +10,26 @@
 }
  */
 var currentTileDataVersion=2;
-function upgradeTileData(data){
- switch(data.version){
-  case 1:return upgradeFromV1(data);
-  default: throw new Error("Unsupported version of tile data: '" + data.version + "'");
+function ensureMapDataUpToDate(mapData){
+ if(!mapData){
+  throw new Error("Invalid map data. Map data cannot be null");
+ }
+ if(!mapData.hasOwnProperty("version")){
+  throw new Error("Invalid map data. Map data must have a version");
+ }
+ var mapDataVersion=mapData.version;
+ if(mapDataVersion===currentTileDataVersion){
+  if(!mapData.hasOwnProperty("tileData") || !mapData.tileData){
+   throw new Error("Invalid map data. Map data must have tile data");
+  }
+  if(!Array.isArray(mapData.tileData)){
+   throw new Error("Invalid map data. Tile data must be an array");
+  }
+  return mapData;
+ }
+ switch(mapData.version){
+  case 1:return upgradeFromV1(mapData);
+  default: throw new Error("Unsupported version of tile data: '" + mapData.version + "'");
  }
 };
 function tileData(depth,palette,objects,collision){

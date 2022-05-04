@@ -7,6 +7,7 @@ var tilemap=canvas.getContext("2d");
 var player=getPlayer();
 player.x=580;
 player.y=630;
+var environment=initEnvironment(tileset);
 var viewport=initViewport(player,canvas);
 var keyboardListener=addKeyboardListener(player);
 //global editor to enable changing active state through browser console
@@ -14,7 +15,7 @@ var editor=null;
 fetch('http://localhost:9000/assets/maps/tile_depth.json')
   .then(response => response.json())
   .then(data => {
-   var environment=initEnvironment(tileset, upgradeTileData(data));
+   environment.update(ensureMapDataUpToDate(data));
    viewport.limitToBoundsOfEnvironment(environment);
    var mouse=addMouseListener(environment, viewport);
    editor=initEditor(mouse,environment,canvas);

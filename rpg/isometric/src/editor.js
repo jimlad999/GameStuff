@@ -1,4 +1,5 @@
 function initEditor(mouse,environment,canvas){
+ var mapDataFilename=document.getElementById("map-data-filename");
  var saveMapData=document.getElementById("save-map-data");
  var loadMapData=document.getElementById("load-map-data");
  var addPalette=document.getElementById("add-palette");
@@ -137,6 +138,29 @@ function initEditor(mouse,environment,canvas){
    }
    e.preventDefault();
  });
+ saveMapData.addEventListener("click",function(){
+  var file = new Blob([JSON.stringify(environment.mapData)], {type: "application/json"});
+  var filename=mapDataFilename.value||"new_map_data";
+  var a = document.createElement("a"),
+  url = URL.createObjectURL(file);
+  a.href = url;
+  a.download = `${filename}.json`;
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function() {
+   document.body.removeChild(a);
+   window.URL.revokeObjectURL(url);
+  },0);
+ });
+ loadMapData.onchange=function(e){
+  var filename=this.value.replace(/.*[\/\\]/, '').replace(".json","");
+  mapDataFilename.value=filename;
+  var reader=new FileReader()
+  reader.onload=function(e) {
+   environment.update(ensureMapDataUpToDate(JSON.parse(e.target.result)));
+  };
+  reader.readAsText(e.target.files[0])
+ };
  addPalette.onchange=function(){
   var palette=this.value.replace(/.*[\/\\]/, '').replace(".png","");
   environment.tileset.setPalette(palette);

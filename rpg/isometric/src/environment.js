@@ -1,7 +1,12 @@
-function initEnvironment(tileset, tileData){
+function initEnvironment(tileset){
  return {
   tileset,
-  tileData:tileData.tileData,
+  mapData:{},
+  tileData:[],
+  update: function(mapData){
+   this.mapData=mapData;
+   this.tileData=mapData.tileData;
+  },
   getTileIndex: function(x,y){
    //offset x,y so 0,0 is center of top-left corner tile
    var ox=x+tileset.tileWidthHalf;
