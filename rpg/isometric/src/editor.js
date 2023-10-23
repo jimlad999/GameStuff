@@ -13,6 +13,7 @@ function initEditor(mouse,environment,canvas){
  var editorInfoPallete=document.getElementById("editor-info-pallete");
  var editorInfoX=document.getElementById("editor-info-x");
  var editorInfoY=document.getElementById("editor-info-y");
+ var editorInfoMajor=document.getElementById("editor-info-major");
  var editorModePaint=document.getElementById("editor-mode-paint");
  var editorModeFlatten=document.getElementById("editor-mode-flatten");
  var lastMouseX,lastMouseY;
@@ -132,6 +133,7 @@ function initEditor(mouse,environment,canvas){
       editorInfoY.textContent=mouse.y;
       editorInfoDepth.textContent=tile.depth;
       editorInfoPallete.textContent=tile.palette;
+      editorInfoMajor.textContent=environment.isMajorTile(mouse.x,mouse.y);
      }
     }
    }
