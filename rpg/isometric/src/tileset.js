@@ -10,6 +10,7 @@ function initTileset(options){
  var assetsFolder=options.assetsFolder||"./assets";
  var tilesFolder=options.tilesFolder===null || options.tilesFolder===undefined ? "/tiles" : options.tilesFolder;
  var objectsFolder=options.objectsFolder===null || options.objectsFolder===undefined ? "/objects" : options.objectsFolder;
+ var editorFolder=options.editorFolder===null || options.editorFolder===undefined ? "/editor" : options.editorFolder;
  var tileset={
   tileWidth: 64, //const
   tileWidthHalf: 32, //tileW/2; //const
@@ -41,6 +42,22 @@ function initTileset(options){
     "Shade":shade
    };
    this.palettes.push(palette);
+  },
+  setEditorHighlightPalette: function(palette){
+   var ground=new Image();
+   ground.src=`${assetsFolder}${editorFolder}/${palette}.png`;
+   var sub1=new Image();
+   sub1.src=`${assetsFolder}${editorFolder}/${palette}-1.png`;
+   var plus1=new Image();
+   plus1.src=`${assetsFolder}${editorFolder}/${palette}+1.png`;
+   this[palette]={
+    "0":ground,
+    "Sub1":sub1,
+    "Sub1Left":sub1,
+    "Sub1Right":sub1,
+    "Plus1":plus1,
+    "Shade":null
+   };
   },
   setObject: function(obj){
    var image=new Image();

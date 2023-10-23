@@ -24,8 +24,10 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
      y+=environment.tileset.wallHeight;
     }
     this.drawImage(tileset["0"],x,y);
-    for(var shadeLevel=0;shadeLevel>d;--shadeLevel){
-     this.drawImage(tileset["Shade"],x,y);
+    if(tileset["Shade"]){
+     for(var shadeLevel=0;shadeLevel>d;--shadeLevel){
+      this.drawImage(tileset["Shade"],x,y);
+     }
     }
     if((leftAboveD<0 && d>leftAboveD) || (rightAboveD<0 && d>rightAboveD)){
      var minDepthEitherSide=rightAboveD==null || leftAboveD<rightAboveD ? leftAboveD : rightAboveD;
@@ -47,8 +49,10 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
      this.drawImage(tileset["Plus1"],x,y+environment.tileset.wallHeightHalf);
     }
     this.drawImage(tileset["0"],x,y);
-    for(var shadeLevel=0;shadeLevel<d;++shadeLevel){
-     this.drawImage(tileset["Shade"],x,y);
+    if(tileset["Shade"]){
+     for(var shadeLevel=0;shadeLevel<d;++shadeLevel){
+      this.drawImage(tileset["Shade"],x,y);
+     }
     }
    }else{
     this.drawImage(tileset["0"],x,y);
@@ -77,6 +81,7 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
    var isTileWithinEditorBrush=editor.getTileWithinBrushFunc();
    var pd=Math.round(player.height/32);
    var drawPlayerMarker=false;
+   var editorDeferredTileToHighlight=[];
    for(var gy=0;gy<environment.numTilesY;++gy){
     var r=environment.getTileDataRow(gy);
     var rAbove;
@@ -129,10 +134,13 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
        drawPlayerMarker=true;
       }
      }
-     var editorActiveAndTileSelected=editor.active && editor.currentSelectedMode && isTileWithinEditorBrush(gx,gy);
+     var editorActiveAndTileSelected=editor.active && (editor.currentSelectedMode || editor.highlightSelectedTiles) && isTileWithinEditorBrush(gx,gy);
      var tilePalette=editorActiveAndTileSelected && editor.currentSelectedMode==="palette"?
        editor.currentSelectedKey:
        tileData.palette;
+     if(editorActiveAndTileSelected && editor.highlightSelectedTiles){
+      editorDeferredTileToHighlight.push({d,x,y});
+     }
      this.drawTile(d,x,y,leftAboveD,rightAboveD,tilePalette);
      //only draw objects above ground if player is above ground. always draw objects underground as they will be drawn over anyway
      if(d<0 || !player.isBelowGround){
@@ -157,6 +165,15 @@ function initRenderer(environment, tilemap, player, viewport, mouse, editor) {
    if(drawPlayerMarker){
     tilemap.globalAlpha=1.0;
     this.drawImage(player.marker,player.x-player.markerXSizeOffset,player.y-player.markerYSizeOffset-player.ySizeOffset-player.height-3);
+   }
+   if(editor.active && editorDeferredTileToHighlight.length>0){
+    tilemap.globalAlpha=1.0;
+    editorDeferredTileToHighlight.forEach(deferred=>{
+     this.drawTile(deferred.d,deferred.x,deferred.y,0,0,editor.highlightPalette);
+     if(deferred.d!==0){
+      this.drawTile(0,deferred.x,deferred.y,0,0,editor.highlightPalette);
+     }
+    });
    }
   }
  };

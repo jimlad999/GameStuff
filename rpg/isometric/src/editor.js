@@ -6,17 +6,21 @@ function initEditor(mouse,environment,canvas){
  var addObject=document.getElementById("add-object");
  var addNpc=document.getElementById("add-npc");
  var brushSize=document.getElementById("brush-size");
+ var highlightSelected=document.getElementById("editor-highlight-selected");
  var editorPalettes=document.getElementById("editor-palettes");
  var editorObjects=document.getElementById("editor-objects");
  var editorNpcs=document.getElementById("editor-npcs");
  var editorInfoDepth=document.getElementById("editor-info-depth");
- var editorInfoPallete=document.getElementById("editor-info-pallete");
+ var editorInfoPalette=document.getElementById("editor-info-palette");
  var editorInfoX=document.getElementById("editor-info-x");
  var editorInfoY=document.getElementById("editor-info-y");
  var editorInfoMajor=document.getElementById("editor-info-major");
  var editorModePaint=document.getElementById("editor-mode-paint");
  var editorModeFlatten=document.getElementById("editor-mode-flatten");
  var lastMouseX,lastMouseY;
+
+ //init editor assets
+ environment.tileset.setEditorHighlightPalette("editor-highlight");
 
  var editor={
   active:true,
@@ -25,6 +29,8 @@ function initEditor(mouse,environment,canvas){
   currentSelectedMode:null,
   currentSelectedKey:null,
   brushSize:1,
+  highlightPalette:"editor-highlight",
+  highlightSelectedTiles:false,
   addPaletteToEditor:function(palette){
    var image=environment.tileset[palette]["0"];
    var newElement=document.createElement('palette');
@@ -132,7 +138,7 @@ function initEditor(mouse,environment,canvas){
       editorInfoX.textContent=mouse.x;
       editorInfoY.textContent=mouse.y;
       editorInfoDepth.textContent=tile.depth;
-      editorInfoPallete.textContent=tile.palette;
+      editorInfoPalette.textContent=tile.palette;
       editorInfoMajor.textContent=environment.isMajorTile(mouse.x,mouse.y);
      }
     }
@@ -235,6 +241,9 @@ function initEditor(mouse,environment,canvas){
    editor.brushSize=newBrushSize;
   }
  };
+ highlightSelected.addEventListener("click",function(){
+  editor.highlightSelectedTiles=this.checked;
+ });
  editorModePaint.onchange=function(){
   editor.clearSelection();
  };
