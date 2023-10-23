@@ -27,10 +27,10 @@ function initEnvironment(tileset){
     this.mapData.objects.push(obj);
    }
   },
-  getTileIndex: function(x,y){
-   //offset x,y so 0,0 is center of top-left corner tile
-   var ox=x+tileset.tileWidthHalf;
-   var oy=y+tileset.tileHeightHalf;
+  getTileIndex: function(worldX,worldY){
+   //offset world x,y so 0,0 is center of top-left corner tile
+   var ox=worldX+tileset.tileWidthHalf;
+   var oy=worldY+tileset.tileHeightHalf;
    var gx=Math.floor(ox/tileset.tileWidth);
    var gy=Math.floor(oy/tileset.tileHeight)*2;
    var nx=(ox%tileset.tileWidth)/tileset.tileWidth;
@@ -48,8 +48,8 @@ function initEnvironment(tileset){
   getTileData: function(tile){
    return this.tileData[tile.y][tile.x]
   },
-  getTileDataRow: function(y){
-   return this.tileData[y];
+  getTileDataRow: function(tileY){
+   return this.tileData[tileY];
   },
   getGroundDepthFromTile: function(tile){
    if(tile.x<0 || tile.y<0 || tile.y>=this.numTilesY || tile.x>=this.numTilesX){
@@ -64,12 +64,12 @@ function initEnvironment(tileset){
   getGroundFromTile: function(tile){
    return this.getGroundDepthFromTile(tile)*tileset.wallHeight;
   },
-  getGround: function(x,y){
-   var tile=this.getTileIndex(x,y);
+  getGround: function(worldX,worldY){
+   var tile=this.getTileIndex(worldX,worldY);
    return this.getGroundFromTile(tile);
   },
-  isMajorTile: function(x,y){
-   return (x*2+y)%2===0;
+  isMajorTile: function(tileX,tileY){
+   return (tileX*2+tileY)%2===0;
   },
   getPushDirections: function(tile){
    var isTileMajorTile=this.isMajorTile(tile.x,tile.y);
@@ -86,8 +86,8 @@ function initEnvironment(tileset){
    );
   },
   /** return true if collision detected */
-  checkCollision: function(x,y,height){
-   var tile=this.getTileIndex(x,y);
+  checkCollision: function(worldX,worldY,height){
+   var tile=this.getTileIndex(worldX,worldY);
    var tileData=this.getTileData(tile);
    if(tileData.collision){
     return {
