@@ -54,6 +54,12 @@ function tileData(depth,palette,objects,collision){
 function updateTileDataDepth(tileData,depth){
  tileData.depth=depth;
 };
+function updateTileDataDepthIncrease(tileData){
+ ++tileData.depth;
+};
+function updateTileDataDepthDecrease(tileData){
+ --tileData.depth;
+};
 function updateTileDataPalette(tileData,palette){
  tileData.palette=palette;
 };

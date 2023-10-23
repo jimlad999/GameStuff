@@ -66,38 +66,42 @@ function initEditor(mouse,environment,canvas){
     mouse.getEqualFunc():
     environment.getSurroundingTiles(mouse.x,mouse.y,this.brushSize-1);
   },
-  update:function(){
-   if(this.action==="paint" && this.currentSelectedMode){
-    var tilesToUpdate=[];
-    if(this.brushSize<2){
-     if(mouse.y<environment.numTilesY){
-     var r=environment.getTileDataRow(mouse.y);
-      if(mouse.x<r.length){
-       tilesToUpdate.push(r[mouse.x]);
-      }
+  getTilesToUpdate:function(){
+   var tilesToUpdate=[];
+   if(this.brushSize<2){
+    if(mouse.y<environment.numTilesY){
+    var r=environment.getTileDataRow(mouse.y);
+     if(mouse.x<r.length){
+      tilesToUpdate.push(r[mouse.x]);
      }
-    }else{
-     var isTileWithinBrush=this.getTileWithinBrushFunc(),
-      brushSize2=this.brushSize*2,
-      mouseXstart=mouse.x-brushSize2,
-      mouseYstart=mouse.y-brushSize2,
-      mouseXend=mouse.x+brushSize2,
-      mouseYend=mouse.y+brushSize2,
-      maxYlen=environment.numTilesY-1,//-1 because we use <= in for loop
-      gy=mouseYstart>0?mouseYstart:0,
-      gyEnd=mouseYend<maxYlen?mouseYend:maxYlen;
-     for(;gy<=gyEnd;++gy){
-      var r=environment.getTileDataRow(gy),
-       maxXlen=r.length-1,//-1 because we use <= in for loop
-       gx=mouseXstart>0?mouseXstart:0,
-       gxEnd=mouseXend<maxXlen?mouseXend:maxXlen;
-      for(;gx<=gxEnd;++gx){
-       if(isTileWithinBrush(gx,gy)){
-        tilesToUpdate.push(r[gx]);
-       }
+    }
+   }else{
+    var isTileWithinBrush=this.getTileWithinBrushFunc(),
+     brushSize2=this.brushSize*2,
+     mouseXstart=mouse.x-brushSize2,
+     mouseYstart=mouse.y-brushSize2,
+     mouseXend=mouse.x+brushSize2,
+     mouseYend=mouse.y+brushSize2,
+     maxYlen=environment.numTilesY-1,//-1 because we use <= in for loop
+     gy=mouseYstart>0?mouseYstart:0,
+     gyEnd=mouseYend<maxYlen?mouseYend:maxYlen;
+    for(;gy<=gyEnd;++gy){
+     var r=environment.getTileDataRow(gy),
+      maxXlen=r.length-1,//-1 because we use <= in for loop
+      gx=mouseXstart>0?mouseXstart:0,
+      gxEnd=mouseXend<maxXlen?mouseXend:maxXlen;
+     for(;gx<=gxEnd;++gx){
+      if(isTileWithinBrush(gx,gy)){
+       tilesToUpdate.push(r[gx]);
       }
      }
     }
+   }
+   return tilesToUpdate;
+  },
+  update:function(){
+   if(this.action==="paint" && this.currentSelectedMode){
+    var tilesToUpdate=this.getTilesToUpdate();
     var updateFunction=null;
     switch(this.currentSelectedMode){
      //functions come from tile-upgrade.js
@@ -147,6 +151,23 @@ function initEditor(mouse,environment,canvas){
  canvas.addEventListener("mouseout",function(){
   if(editor.action==="paint"){
    editor.action=null;
+  }
+ });
+ canvas.addEventListener("wheel",function(e){
+  var updateFunction;
+  //functions come from tile-upgrade.js
+  if(e.deltaY<0){
+   updateFunction=updateTileDataDepthDecrease;
+  }else if(e.deltaY>0){
+   updateFunction=updateTileDataDepthIncrease;
+  }
+  if(updateFunction){
+   var tilesToUpdate=editor.getTilesToUpdate();
+   if(tilesToUpdate.length>0){
+    tilesToUpdate.forEach(tileData => {
+     updateFunction(tileData);
+    });
+   }
   }
  });
  document.addEventListener("keydown",function(e){
