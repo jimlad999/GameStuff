@@ -2,7 +2,7 @@ function getPlayer() {
  var player = {
   x: 0,
   y: 0,
-  isBelowGround: false,
+  isBelowGround: false,//i.e. underground
  
   xSpeed: 0,
   xSpeedPower: 4,//4 normal; 6 debug; //const
@@ -16,6 +16,8 @@ function getPlayer() {
   jumpSpeed: 0,
   jumpPower: 12, //const
   gravity: 2, //const
+  jumpCount: 0,
+  maxJumpCount: 2,//const //unlockable feature?
  
   image: new Image(),
   xSizeOffset: 11, //const //half img width
@@ -43,7 +45,9 @@ function getPlayer() {
    this.ySpeed=0;
   },
   jump: function(){
+   if(this.jumpCount>=this.maxJumpCount) return;
    this.jumpSpeed=this.jumpPower;
+   ++this.jumpCount;
   },
   update: function(environment){
    var pground=null,
@@ -102,6 +106,7 @@ function getPlayer() {
    if(this.height<=pground){
     this.jumpSpeed=0;
     this.height=pground;
+    this.jumpCount=0;
    }
    // detecting "underground"
    if(this.height<-42 ){
