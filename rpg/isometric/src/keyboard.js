@@ -1,8 +1,15 @@
 function addKeyboardListener(player) {
+ var preventKeyRepeat=[];
+ preventKeyRepeat[32]=true;
+ var keysPressed=[];
  var keyboardListener = {
   pause: false,
   onKeydown: function(e){
    if(this.pause) return;
+   if(preventKeyRepeat[e.which]){
+    if(keysPressed[e.which]) return;
+    keysPressed[e.which]=true;
+   }
    switch (e.which) {
     //space sometimes not registered as pressed when multiple arrow keys pressed.
     //while testing, space not registered while pressing down and left keys.
@@ -19,6 +26,9 @@ function addKeyboardListener(player) {
   },
   onKeyUp: function(e){
    if(this.pause) return;
+   if(preventKeyRepeat[e.which]){
+    keysPressed[e.which]=false;
+   }
    switch (e.which) {
     case 37: player.stopMoveHorizontal(); break;
     case 38: player.stopMoveVertical(); break;
