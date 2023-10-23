@@ -14,6 +14,7 @@ function addMouseListener(environment, viewport){
  };
  document.addEventListener("mousemove",function(e){
   var tile=environment.getTileIndex(e.offsetX+viewport.x-viewport.widthHalf,e.offsetY+viewport.y-viewport.heightHalf);
+  //mouse can be duck typed as a "tile"
   mouse.x=tile.x;
   mouse.y=tile.y;
   mouse.screenX=e.offsetX;

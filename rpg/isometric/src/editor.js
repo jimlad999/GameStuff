@@ -9,6 +9,11 @@ function initEditor(mouse,environment,canvas){
  var editorPalettes=document.getElementById("editor-palettes");
  var editorObjects=document.getElementById("editor-objects");
  var editorNpcs=document.getElementById("editor-npcs");
+ var editorInfoDepth=document.getElementById("editor-info-depth");
+ var editorInfoPallete=document.getElementById("editor-info-pallete");
+ var editorInfoX=document.getElementById("editor-info-x");
+ var editorInfoY=document.getElementById("editor-info-y");
+ var lastMouseX,lastMouseY;
 
  var editor={
   active:true,
@@ -103,6 +108,19 @@ function initEditor(mouse,environment,canvas){
      tilesToUpdate.forEach(tileData => {
       updateFunction(tileData,this.currentSelectedKey);
      });
+    }
+   }else if(lastMouseX!==mouse.x || lastMouseY!==mouse.y){
+    lastMouseX=mouse.x;
+    lastMouseY=mouse.y;
+    var r=environment.getTileDataRow(mouse.y);
+    if(r){
+     var tile=r[mouse.x];
+     if(tile){
+      editorInfoX.textContent=mouse.x;
+      editorInfoY.textContent=mouse.y;
+      editorInfoDepth.textContent=tile.depth;
+      editorInfoPallete.textContent=tile.palette;
+     }
     }
    }
   }

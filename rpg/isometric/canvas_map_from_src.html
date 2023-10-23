@@ -19,6 +19,12 @@ h1 {
 label {
  font-size:13px;
 }
+label.editor-info {
+ font-weight: bold;
+}
+label.editor-info:not(:first-child) {
+ border-left: 1px solid black;
+}
 .editor-panel {
  border:1px solid black;
 }
@@ -47,22 +53,35 @@ palette.selected,tileobject.selected {
 </head>
 <body>
 <canvas id="tilemap" height="720" width="1280"></canvas>
-<h1>controls</h1>
-<div class="editor-panel">
- <label class="editor-filename">Filename <input type="text" id="map-data-filename" /></label>
- <button class="editor-file-save" id="save-map-data">Save map data</button>
- <label class="editor-file-upload"><input type="file" id="load-map-data" accept="application/json" />Load map data</label>
- <label class="editor-file-upload"><input type="file" id="add-palette" accept="image/png" />Add palette</label>
- <label class="editor-file-upload"><input type="file" id="add-object" accept="image/png" />Add object</label>
- <label class="editor-file-upload"><input type="file" id="add-npc" accept="image/png" />Add npc</label>
- <label class="editor-brush-size">Brush size <input type="number" id="brush-size" value="1" min="1" /></label>
+<div id="editor-controls">
+ <h1>controls</h1>
+ <div class="editor-panel">
+  <label class="editor-filename">Filename <input type="text" id="map-data-filename" /></label>
+  <button class="editor-file-save" id="save-map-data">Save map data</button>
+  <label class="editor-file-upload"><input type="file" id="load-map-data" accept="application/json" />Load map data</label>
+  <label class="editor-file-upload"><input type="file" id="add-palette" accept="image/png" />Add palette</label>
+  <label class="editor-file-upload"><input type="file" id="add-object" accept="image/png" />Add object</label>
+  <label class="editor-file-upload"><input type="file" id="add-npc" accept="image/png" />Add npc</label>
+  <label class="editor-brush-size">Brush size <input type="number" id="brush-size" value="1" min="1" /></label>
+ </div>
+ <h1>info</h1>
+ <div class="editor-panel">
+  <label class="editor-info">Depth:</button>
+  <span class="editor-info" id="editor-info-depth"></span>
+  <label class="editor-info">Pallete:</button>
+  <span class="editor-info" id="editor-info-pallete"></span>
+  <label class="editor-info">X:</button>
+  <span class="editor-info" id="editor-info-x"></span>
+  <label class="editor-info">Y:</button>
+  <span class="editor-info" id="editor-info-y"></span>
+ </div>
+ <h1>palettes</h1>
+ <div id="editor-palettes" class="editor-panel"></div>
+ <h1>objects</h1>
+ <div id="editor-objects" class="editor-panel"></div>
+ <h1>npcs</h1>
+ <div id="editor-npcs" class="editor-panel"></div>
 </div>
-<h1>palettes</h1>
-<div id="editor-palettes" class="editor-panel"></div>
-<h1>objects</h1>
-<div id="editor-objects" class="editor-panel"></div>
-<h1>npcs</h1>
-<div id="editor-npcs" class="editor-panel"></div>
 <script type="text/javascript" src="./src/tileset.js"></script>
 <script type="text/javascript" src="./src/player.js"></script>
 <script type="text/javascript" src="./src/keyboard.js"></script>
