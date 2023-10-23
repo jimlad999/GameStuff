@@ -13,6 +13,8 @@ function initEditor(mouse,environment,canvas){
  var editorInfoPallete=document.getElementById("editor-info-pallete");
  var editorInfoX=document.getElementById("editor-info-x");
  var editorInfoY=document.getElementById("editor-info-y");
+ var editorModePaint=document.getElementById("editor-mode-paint");
+ var editorModeFlatten=document.getElementById("editor-mode-flatten");
  var lastMouseX,lastMouseY;
 
  var editor={
@@ -100,18 +102,24 @@ function initEditor(mouse,environment,canvas){
    return tilesToUpdate;
   },
   update:function(){
-   if(this.action==="paint" && this.currentSelectedMode){
-    var tilesToUpdate=this.getTilesToUpdate();
+   if(this.action!==null){
     var updateFunction=null;
-    switch(this.currentSelectedMode){
-     //functions come from tile-upgrade.js
-     case "palette":updateFunction=updateTileDataPalette; break;
-     case "object":updateFunction=updateTileDataObject; break;
+    if(this.action==="paint" && this.currentSelectedMode && typeof this.currentSelectedKey === "string"){
+     switch(this.currentSelectedMode){
+      //functions come from tile-upgrade.js
+      case "palette":updateFunction=updateTileDataPalette; break;
+      case "object":updateFunction=updateTileDataObject; break;
+     }
+    }else if(this.action==="flatten" && typeof this.currentSelectedKey === "number"){
+     updateFunction=updateTileDataDepth;
     }
-    if(tilesToUpdate.length>0 && updateFunction){
-     tilesToUpdate.forEach(tileData => {
-      updateFunction(tileData,this.currentSelectedKey);
-     });
+    if(updateFunction && this.currentSelectedKey!==null){
+     var tilesToUpdate=this.getTilesToUpdate();
+     if(tilesToUpdate.length>0){
+      tilesToUpdate.forEach(tileData => {
+       updateFunction(tileData,this.currentSelectedKey);
+      });
+     }
     }
    }else if(lastMouseX!==mouse.x || lastMouseY!==mouse.y){
     lastMouseX=mouse.x;
@@ -141,15 +149,21 @@ function initEditor(mouse,environment,canvas){
  environment.tileset.objects.forEach(o => editor.addObjectToEditor(o));
 
  canvas.addEventListener("mousedown",function(){
-  editor.action="paint";
+  if(editorModePaint.checked){
+   editor.action="paint";
+  }else if(editorModeFlatten.checked){
+   var tileData=environment.getTileData(mouse);
+   editor.currentSelectedKey=tileData.depth;
+   editor.action="flatten";
+  }
  });
  canvas.addEventListener("mouseup",function(){
-  if(editor.action==="paint"){
+  if(editor.action!==null){
    editor.action=null;
   }
  });
  canvas.addEventListener("mouseout",function(){
-  if(editor.action==="paint"){
+  if(editor.action!==null){
    editor.action=null;
   }
  });
@@ -218,6 +232,12 @@ function initEditor(mouse,environment,canvas){
   if(newBrushSize>0){
    editor.brushSize=newBrushSize;
   }
+ };
+ editorModePaint.onchange=function(){
+  editor.clearSelection();
+ };
+ editorModeFlatten.onchange=function(){
+  editor.clearSelection();
  };
 
  return editor;
