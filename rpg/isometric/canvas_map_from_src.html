@@ -8,6 +8,20 @@ body,html {
  padding:0;
  font-size:0;
  font-family: Arial;
+ overflow: hidden;
+ height: 100%;
+}
+body {
+ display: flex;
+ flex-direction: column;
+}
+.editor-controls {
+ flex: 1;
+ overflow: auto;
+}
+.editor-contols > * {
+ height: 100%;
+ overflow: auto;
 }
 canvas {
  background:black;
@@ -53,7 +67,7 @@ palette.selected,tileobject.selected {
 </head>
 <body>
 <canvas id="tilemap" height="720" width="1280"></canvas>
-<div id="editor-controls">
+<div id="editor-controls" class="editor-controls">
  <h1>controls</h1>
  <div class="editor-panel">
   <label class="editor-filename">Filename <input type="text" id="map-data-filename" /></label>
@@ -72,15 +86,15 @@ palette.selected,tileobject.selected {
  </div>
  <h1>info</h1>
  <div class="editor-panel">
-  <label class="editor-info">Depth:</button>
+  <label class="editor-info">Depth:</label>
   <span class="editor-info" id="editor-info-depth"></span>
-  <label class="editor-info">Palette:</button>
+  <label class="editor-info">Palette:</label>
   <span class="editor-info" id="editor-info-palette"></span>
-  <label class="editor-info">X:</button>
+  <label class="editor-info">X:</label>
   <span class="editor-info" id="editor-info-x"></span>
-  <label class="editor-info">Y:</button>
+  <label class="editor-info">Y:</label>
   <span class="editor-info" id="editor-info-y"></span>
-  <label class="editor-info">Major:</button>
+  <label class="editor-info">Major:</label>
   <span class="editor-info" id="editor-info-major"></span>
  </div>
  <h1>palettes</h1>
